@@ -56,7 +56,7 @@ const login = () =>
 
     }).then(res=>{
         if(res.ok)
-            window.location.href = "/ciao";
+            window.location.href = "/hola";
         else
             alert(res.statusText);
     })
