@@ -55,7 +55,7 @@ const login = () =>
         }
 
     }).then(res=>{
-        if(res.ok)
+        if(res.ok && res.status==200)
             window.location.href = "/hola";
         else
             alert(res.statusText);
