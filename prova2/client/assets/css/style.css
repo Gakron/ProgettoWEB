@@ -4,32 +4,33 @@
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
 }
-body {
-    background: #000;
-}
+
 body::before {
     content: "";
     position: absolute;
     left: 0;
     top: 0;
-    opacity: 0.5;
     width: 100%;
     height: 100%;
-    background: linear-gradient(150deg, rgb(3, 111, 28) 0%, rgba(4, 177, 105, 0.964) 100%);
-
+    background: rgb(31, 106, 12);
+    background: linear-gradient(115deg, rgba(31, 106, 12, 1) 0%, rgba(10, 97, 12, 1) 100%);
+    
     background-position: center;
 }
+
+
 nav {
     position: fixed;
     padding: 25px 60px;
     z-index: 1;
 }
+
 nav a img {
     width: 167px;
 }
 
 
-.hidden{
+.hidden {
     display: none;
 }
 
@@ -44,18 +45,22 @@ nav a img {
     transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.421);
 }
+
 .form-login h2 {
     color: #fff;
     font-size: 2rem;
 }
+
 .form-login form {
     margin: 25px 0 65px;
 }
+
 form .form-control {
     height: 50px;
     position: relative;
     margin-bottom: 16px;
 }
+
 .form-control input {
     height: 100%;
     width: 100%;
@@ -67,10 +72,12 @@ form .form-control {
     font-size: 1rem;
     padding: 0 20px;
 }
+
 .form-control input:is(:focus, :valid) {
     background: #444;
     padding: 16px 20px 0;
 }
+
 .form-control label {
     position: absolute;
     left: 20px;
@@ -81,10 +88,12 @@ form .form-control {
     color: #8c8c8c;
     transition: all 0.1s ease;
 }
+
 .form-control input:is(:focus, :valid)~label {
     font-size: 0.75rem;
     transform: translateY(-130%);
 }
+
 form button {
     width: 100%;
     padding: 16px 0;
@@ -99,58 +108,78 @@ form button {
     cursor: pointer;
     transition: 0.1s ease;
 }
+
 form button:hover {
     background: #02cd1d;
 }
+
 .form-login a {
     text-decoration: none;
 }
+
 .form-login a:hover {
     text-decoration: underline;
 }
+
 .form-login :where(label, p, small, a) {
     color: #b3b3b3;
 }
+
 form .form-help {
     display: flex;
     justify-content: space-between;
 }
+
 form .remember-me {
     display: flex;
 }
+
 form .remember-me input {
     margin-right: 5px;
     accent-color: #b3b3b3;
 }
+
 form .form-help :where(label, a) {
     font-size: 0.9rem;
 }
+
 .form-login p a {
     color: #fff;
 }
+
 .form-login small {
     display: block;
     margin-top: 15px;
     color: #b3b3b3;
 }
+
 .form-login small a {
     color: #0071eb;
 }
+
 @media (max-width: 740px) {
     body::before {
         display: none;
     }
-    nav, .form-login, .form-signup {
+
+    nav,
+    .form-login,
+    .form-signup {
         padding: 20px;
     }
+
     nav a img {
         width: 140px;
     }
-    .form-login, .form-signup {
+
+    .form-login,
+    .form-signup {
         width: 100%;
         top: 43%;
     }
-    .form-login form, .form-signup form {
+
+    .form-login form,
+    .form-signup form {
         margin: 25px 0 40px;
     }
 }
@@ -174,6 +203,7 @@ form .form-help :where(label, a) {
     color: #fff;
     font-size: 2rem;
 }
+
 .form-signup form {
     margin: 25px 0 65px;
 }
@@ -181,9 +211,11 @@ form .form-help :where(label, a) {
 .form-signup a {
     text-decoration: none;
 }
+
 .form-signup a:hover {
     text-decoration: underline;
 }
+
 .form-signup :where(label, p, small, a) {
     color: #b3b3b3;
 }
@@ -191,11 +223,13 @@ form .form-help :where(label, a) {
 .form-signup p a {
     color: #fff;
 }
+
 .form-signup small {
     display: block;
     margin-top: 15px;
     color: #b3b3b3;
 }
+
 .form-signup small a {
     color: #0071eb;
 }

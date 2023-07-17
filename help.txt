@@ -1,0 +1,67 @@
+html
+Copy code
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="login-signup">
+      <button class="login">Login</button>
+      <button class="signup">Signup</button>
+    </div>
+  </header>
+  <!-- Resto del contenuto della pagina -->
+</body>
+</html>
+CSS Styling:
+
+css
+Copy code
+body {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f8f8;
+  padding: 10px;
+}
+
+.logo img {
+  max-width: 100px;
+  height: auto;
+}
+
+.login-signup {
+  display: flex;
+}
+
+.login,
+.signup {
+  margin-left: 10px;
+  padding: 8px 16px;
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+Spiegazione:
+
+L'elemento <header> rappresenta l'intestazione della pagina.
+Il contenuto dell'intestazione è diviso in due parti: il logo e i bottoni di login e signup.
+La classe CSS .logo viene applicata al <div> del logo, mentre .login-signup viene applicata al <div> dei bottoni di login e signup.
+L'immagine del logo viene ridimensionata con max-width: 100px e l'altezza si adatta proporzionalmente.
+I bottoni di login e signup sono stilizzati con uno sfondo blu (#4285F4), testo bianco, bordi arrotondati e spaziatura.
+L'intestazione (<header>) viene resa flessibile (display: flex) con allineamento dei contenuti sia orizzontale (justify-content: space-between) che verticale (align-items: center).
+Il resto del contenuto della pagina può essere inserito dopo l'intestazione.
+Assicurati di sostituire le risorse (logo.png) con i tuoi file effettivi e personalizza gli stili e la disposizione in base alle tue preferenze.

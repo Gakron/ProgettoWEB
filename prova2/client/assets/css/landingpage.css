@@ -1,0 +1,104 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+body {
+    /* background: rgb(31,106,12);
+    background: linear-gradient(115deg, rgba(31,106,12,1) 0%, rgba(10,97,12,1) 100%); */
+    background: rgb(255, 254, 255);
+    background: linear-gradient(90deg, rgba(255, 254, 255, 1) 0%, rgba(51, 80, 45, 0.9) 0%, rgba(35, 71, 34, 0.9) 100%);
+}
+
+
+.bottoni {
+    overflow: hidden;
+    background-color: #333;
+    height: 60px;
+}
+
+.bottoni a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 16px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    height: 60px;
+}
+
+.bottoni a:hover {
+    background-color: #ddd;
+    color: black;
+
+}
+
+.bottoni a.active {
+    background-color: #04AA6D;
+    color: white;
+}
+
+.bottoni .icon {
+    height: 48px;
+    width: 48px;
+    cursor: pointer;
+    margin: 0px;
+    position: absolute;
+    padding: 0px;
+    border: none;
+    display: none;
+}
+
+#logo {
+    left: 80px;
+    top: 50px;
+    width: 250px;
+    height: 150px;
+    position: relative;
+    display: block;
+}
+
+
+
+#presentation {
+    border: #333 solid;
+    border-radius: 25% 25% 25% 25% / 25% 25% 25% 25%;;
+    box-sizing: border-box;
+    box-shadow: 8px 8px 3px rgba(51, 51, 51, 0.5);
+    padding: 8px;
+    font-size: 20px;
+    display: block;
+    position: relative;
+    width: 40%;
+    left: 80px;
+    right: 200px;
+    top: 100px;
+    font-weight: 530;
+}
+
+
+
+@media screen and (max-width: 600px) {
+    
+    #logo {
+        left: 30px;
+        top: 30px;
+        width: 200px;
+        height: 100px;
+    }
+
+    #presentation {
+        font-size: 18px;
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        left: 30px;
+        right: 200px;
+        top: 50px
+    }
+}
+
