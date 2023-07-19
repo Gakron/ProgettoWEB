@@ -28,6 +28,7 @@ const register = () =>
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then(res => {
+        debugger;
         if (res.ok)
             alert("TI SEI REGISTRATO!");
         else if (res.status == 409)
@@ -56,7 +57,7 @@ const login = () =>
 
     }).then(res=>{
         if(res.ok && res.status==200)
-            window.location.href = "/hola";
+        window.location.assign("/public/pages/home.html");
         else
             alert(res.statusText);
     })

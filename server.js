@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 
+const cors = require('cors');
+app.use(cors());
 
 const mysql = require('mysql2');
 
@@ -28,6 +30,7 @@ connection.connect(function (err) {
 app.use(express.static('public'));
 
 app.use(bodyParser.json());
+
 
 
 app.post("/register", (req, res) => {
