@@ -30,16 +30,16 @@ const register = () =>
     }).then(res => {
         debugger;
         if (res.ok)
-            alert("TI SEI REGISTRATO!");
+            var msg=("TI SEI REGISTRATO!");
         else if (res.status == 409)
-            alert("EMAIL GIA REGISTRATA")
+            var msg=("EMAIL GIA REGISTRATA")
         else if (res.status == 400)
-            alert("LE PASSWORD NON CORRISPONDONO")
+            var msg=("LE PASSWORD NON CORRISPONDONO")
         else
-            alert("GENERIC ERROR")
+            var msg=("GENERIC ERROR")
     })
         .catch(_ => {
-            alert("GENERIC ERROR")
+            var msg=("GENERIC ERROR")
         })
 
 

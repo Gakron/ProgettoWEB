@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+body {
+    /* background: rgb(255, 254, 255);
+    background: linear-gradient(90deg, rgba(255, 254, 255, 1) 0%, rgba(51, 80, 45, 0.9) 0%, rgba(35, 71, 34, 0.9) 100%); */
+
+    background: rgb(127, 134, 136);
+    background: linear-gradient(0deg, rgba(127, 134, 136, 1) 0%, rgba(146, 157, 158, 1) 99%);
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: #333 2px solid;
+    box-shadow: 5px 2px 4px 1px #33333399;
+}
+
+.logo img {
+    margin: 15px 0px 10px 15px;
+    width: 200px;
+    height: 100%;
+}
+
+.search-box {
+    max-width: 240px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    column-gap: 0.7rem;
+    padding: 8px 15px;
+    background: #333;
+    border-radius: 4rem;
+    margin-right: 1rem;
+    margin-top:15px;
+    float: right;
+}
+
+
+#search-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fcfeff;
+    background: transparent;
+    font-size: 0.9rem;
+}
+
+.search-box img {
+    width: 32px;
+    height: 32px;
+    color: white;
+}
+
+.search-box .bx {
+    cursor: pointer;
+
+}
+
+.search-box .bx:hover {
+    color: white;
+}
+
+.profile-box {
+    display: flex;
+
+    margin-right: 20px;
+}
+
+.profile-box span {
+    color: white;    
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 540;
+    margin-top: 20px;
+    margin-right: 5px;
+}
+
+.profile-box .profile {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
