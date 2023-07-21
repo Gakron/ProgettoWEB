@@ -28,7 +28,6 @@ const register = () =>
             "Content-type": "application/json; charset=UTF-8"
         }
     }).then(res => {
-        debugger;
         if (res.ok)
             var msg=("TI SEI REGISTRATO!");
         else if (res.status == 409)

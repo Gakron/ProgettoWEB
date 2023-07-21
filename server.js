@@ -6,6 +6,11 @@ var jsonParser = bodyParser.json();
 const cors = require('cors');
 app.use(cors());
 
+
+
+const axios= require("axios");
+
+
 const mysql = require('mysql2');
 
 let connection = mysql.createConnection({
@@ -100,10 +105,14 @@ app.post("/login", (req, res) => {
     }
     else{
       res.sendStatus(200);
-      return;
+      return;s
     }
   })
 })
+
+
+
+
 
 app.listen(3000, () => {
   console.log("In ascolto sulla porta 3000");
