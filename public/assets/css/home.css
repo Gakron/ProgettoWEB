@@ -90,32 +90,7 @@ header {
 }
 
 
------------------------------- .watch-btn {
-    display: flex;
-    align-items: center;
-    column-gap: 0.8rem;
-    color: #fcfeff;
-}
 
-.watch-btn .bx {
-    font-size: 21px;
-    background: #ffb43a;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.watch-btn .bx:hover {
-    background: hsl(37, 94%, 57%);
-}
-
-.watch-btn span {
-    font-size: 1rem;
-    font-weight: 400;
-}
 
 .heading {
     display: flex;
@@ -149,6 +124,8 @@ header {
 .swiper-wrapper img {
     height: 250px;
     width: 100%;
+    cursor: pointer;
+
 }
 
 .swiper-slide {

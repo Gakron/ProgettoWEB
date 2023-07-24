@@ -38,46 +38,31 @@ window.onload = () => {
             this.changeSection("search-results");
             const risposta = (await axios.get(this.getHost() + "s=" + title + "&")).data;
 
-            const containerDom = document.querySelector("#search-results>.movies-content");
-            containerDom.innerHTML = "";
+            const swiperContainer = document.querySelector("#search-results .swiper-container");
+            swiperContainer.innerHTML="";
 
             for (const movie of risposta.Search) {
-                const btnPlay = document.createElement("a");
-                btnPlay.setAttribute("href", "javascript:;");
-                btnPlay.classList.add("watch-btn", "play-btn");
-                btnPlay.innerHTML = "<i class='bx bx-right-arrow'></i>";
-                btnPlay.addEventListener("click", () => {
+                
+                
+                const swiperWrapper = document.createElement("div");
+                swiperWrapper.classList.add("swiper-wrapper");
+
+                const swiperSlide = document.createElement("img");
+                swiperSlide.classList.add("swiper-slide");
+                swiperSlide.setAttribute("src", movie.Poster);
+
+                swiperSlide.addEventListener("click", () => {
                     this.getMovieInfo(movie);
                 });
 
-                const movieBox = document.createElement("div");
-                movieBox.classList.add("movie-box");
-
-                const movieBoxImage = document.createElement("img");
-                movieBoxImage.classList.add("movie-box-img");
-                movieBoxImage.setAttribute("src", movie.Poster);
-
-                const movieBoxText = document.createElement("div");
-                movieBoxText.classList.add("box-text");
-
-                const movieBoxTitle = document.createElement("h2");
-                movieBoxTitle.classList.add("movie-title");
-                movieBoxTitle.innerHTML = movie.Title;
-
-                const movieBoxType = document.createElement("span");
-                movieBoxType.classList.add("movie-type");
-                movieBoxType.innerHTML = movie.Year;
-
-                movieBoxText.appendChild(movieBoxTitle);
-                movieBoxText.appendChild(movieBoxType);
-                movieBoxText.appendChild(btnPlay);
-
-                movieBox.appendChild(movieBoxImage);
-                movieBox.appendChild(movieBoxText);
 
 
-                containerDom.appendChild(movieBox);
+                swiperWrapper.appendChild(swiperSlide);
+
+
+                swiperContainer.appendChild(swiperWrapper);
             }
+
         },
 
         testPromiseLastMovies: function () {
