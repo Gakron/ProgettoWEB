@@ -158,21 +158,62 @@ header {
     box-sizing: border-box;
 }
 
-/* Nascondi i bottoni prev/next su dispositivi con schermo piccolo
-  @media screen and (max-width: 480px) {
+
+
+@media screen and (max-width: 1050px) {
+    .swiper-slide {
+        flex: 0 0 calc(100% / 5);
+        /* Per visualizzare massimo 5 film alla volta */
+        padding: 20px;
+        box-sizing: border-box;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .swiper-slide {
+        flex: 0 0 calc(100% / 4);
+        /* Per visualizzare massimo 4 film alla volta */
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .swiper-container {
+        display: flex;
+        overflow: hidden;
+        max-width: 100%;
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .swiper-slide {
+        flex: 0 0 calc(100% / 3);
+        /* Per visualizzare massimo 3 film alla volta */
+        padding: 15px;
+        box-sizing: border-box;
+    }
+}
+
+/* Nascondi i bottoni prev/next su dispositivi con schermo piccolo */
+@media screen and (max-width: 480px) {
     .swiper-button-prev,
     .swiper-button-next {
       display: none;
     }
-  } */
+
+    .swiper-slide {
+        flex: 0 0 calc(100% / 2);
+        /* Per visualizzare massimo 2 film alla volta */
+        padding: 10px;
+        box-sizing: border-box;
+    }
+  } 
 
 .heading .heading-title {
     font-size: 1.2rem;
     font-weight: 500;
 }
-
-
-
 
 
 .swiper-button-next,
@@ -182,7 +223,6 @@ header {
     position: absolute;
     top: 50%;
     border-radius: 200px 200px 200px 200px;
-
     background-color: #333;
     color: #fff;
     font-size: 16px;
@@ -198,12 +238,12 @@ header {
 
 .swiper-button-next {
     top: 300px;
-    left: 20px;
+    right: 20px;
 }
 
 .swiper-button-prev {
     top: 300px;
-    right: 20px;
+    left: 20px;
 }
 
 .hidden {
