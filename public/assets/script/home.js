@@ -8,20 +8,20 @@ const slideWidth = 220; // Larghezza della slide, considerando margini
 
 let currentPosition = 0;
 
-// prevButton.addEventListener('click', () => {
-//   currentPosition = Math.max(currentPosition - slideWidth, 0);
-//   updateSwiperPosition();
-// });
+prevButton.addEventListener('click', () => {
+  currentPosition = Math.max(currentPosition - slideWidth, 0);
+  updateSwiperPosition();
+});
 
-// nextButton.addEventListener('click', () => {
-//   const maxPosition = swiperWrapper.scrollWidth - swiperContainer.offsetWidth;
-//   currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
-//   updateSwiperPosition();
-// });
+nextButton.addEventListener('click', () => {
+  const maxPosition = swiperWrapper.scrollWidth - swiperContainer.offsetWidth;
+  currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
+  updateSwiperPosition();
+});
 
-// function updateSwiperPosition() {
-//   swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
-// }
+function updateSwiperPosition() {
+  swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
+}
 
 
 window.onload = () => {
@@ -95,7 +95,7 @@ window.onload = () => {
 
         getLastMovies : async function(){
             const risposta = await this.testPromiseLastMovies();
-      
+
             const containerDom = document.querySelector("#search-results>.movies-content");
             containerDom.innerHTML = "";
 

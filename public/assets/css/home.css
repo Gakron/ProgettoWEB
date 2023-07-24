@@ -39,7 +39,7 @@ header {
     background: #333;
     border-radius: 4rem;
     margin-right: 1rem;
-    margin-top:15px;
+    margin-top: 15px;
     float: right;
 }
 
@@ -75,7 +75,7 @@ header {
 }
 
 .profile-box span {
-    color: white;    
+    color: white;
     cursor: pointer;
     font-size: 18px;
     font-weight: 540;
@@ -90,17 +90,14 @@ header {
 }
 
 
-------------------------------
-
-
-.watch-btn{
-    display:flex ;
+------------------------------ .watch-btn {
+    display: flex;
     align-items: center;
     column-gap: 0.8rem;
     color: #fcfeff;
 }
 
-.watch-btn .bx{
+.watch-btn .bx {
     font-size: 21px;
     background: #ffb43a;
     width: 40px;
@@ -111,16 +108,16 @@ header {
     justify-content: center;
 }
 
-.watch-btn .bx:hover{
+.watch-btn .bx:hover {
     background: hsl(37, 94%, 57%);
 }
 
-.watch-btn span{
+.watch-btn span {
     font-size: 1rem;
     font-weight: 400;
 }
 
-.heading{
+.heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -128,36 +125,40 @@ header {
     margin-bottom: 2rem;
 }
 
-.heading .heading-title{
-   font-size: 1.2rem;
-   font-weight: 500;
+.heading .heading-title {
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
 
 
 .swiper-container {
+    display: flex;
+
     overflow: hidden;
-    position: relative;
-    width: auto;
+    max-width: 100%;
     margin-left: 80px;
     margin-right: 80px;
-  }
-  
-  .swiper-wrapper {
+}
+
+.swiper-wrapper {
     display: flex;
     transition: transform 0.3s ease-in-out;
-  }
-  
-  .swiper-wrapper img{
+}
+
+.swiper-wrapper img {
     height: 250px;
-    width: 180px;
-  }
-  .swiper-slide {
-    flex: 0 0 50px;
-    margin-right: 40px;
-  }
-  
-  /* Nascondi i bottoni prev/next su dispositivi con schermo piccolo
+    width: 100%;
+}
+
+.swiper-slide {
+    flex: 0 0 calc(100% / 6);
+    /* Per visualizzare massimo 6 film alla volta */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Nascondi i bottoni prev/next su dispositivi con schermo piccolo
   @media screen and (max-width: 480px) {
     .swiper-button-prev,
     .swiper-button-next {
@@ -165,87 +166,46 @@ header {
     }
   } */
 
-  .heading .heading-title{
+.heading .heading-title {
     font-size: 1.2rem;
     font-weight: 500;
- }
- 
- 
- 
- .movie-box{
-     position: relative;
-     width: 100%;
-     height: 380px;
-     overflow: hidden;
- }
- 
- .movie-box .movie-box-img{
-     width: 100%;
-     height: 100%;
-     object-fit: cover;
- }
- 
- .movie-box .box-text{
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     width: 100%;
-     height: 100%;
-     display: flex;
-     flex-direction: column;
-     justify-content: flex-end;
-     padding: 14px;
-     background: linear-gradient(8deg, hsl(240 17% 14% / 74%) 14%, hsl(240 17% 14% /14%) 44%);
-     overflow: hidden;
- }
- 
- .movie-box .box-text .movie-title{
-     font-size: 1.1rem;
-     font-weight: 500;
- }
- 
- .movie-box .box-text .movie-type{
-     font-size: 0.9rem;
- 
- }
- 
- .movie-box .box-text .play-btn{
-     position: absolute;
-     font-size: 0.8rem;
-     right: 0.8rem;
- }
- 
- 
- .swiper-btn{
-     display: flex;
- }
- .swiper-btn .swiper-button-next, .swiper-btn .swiper-button-prev{
-     position: static !important;
-     margin: 0 0 0 10px;
- }
- 
- .swiper-btn .swiper-button-next::after, .swiper-btn .swiper-button-prev::after{
-     color: #fcfeff;
-     font-size: 18px !important;
-     font-weight: 700;
- }
- 
- .movies .heading{
-     padding: 10px 14px;
- }
- 
- .movies .movies-content{
-     display: grid;
-     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-     gap: 1.5rem;
- }
- 
- .movies .movies-content .movie-box:hover .movie-box-img{
-     transform: scale(1.1);
-     transition: .5s;
- }
+}
 
 
-.hidden{
+
+
+
+.swiper-button-next,
+.swiper-button-prev {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 50%;
+    border-radius: 200px 200px 200px 200px;
+
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    color: #fcfeff;
+    font-size: 18px !important;
+    font-weight: 700;
+}
+
+.swiper-button-next {
+    top: 300px;
+    left: 20px;
+}
+
+.swiper-button-prev {
+    top: 300px;
+    right: 20px;
+}
+
+.hidden {
     display: none;
 }

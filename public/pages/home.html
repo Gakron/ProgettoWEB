@@ -3,74 +3,95 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T-Sho</title>
-    <link rel="stylesheet" href="/public/assets/css/home.css"">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T-Sho</title>
+  <link rel="stylesheet" href="/public/assets/css/home.css"">
 </head>
 
 
 <body>
     
     <header>
-        <div class="logo">
-            <img src="/public/assets/images/logo.svg" alt="Logo">
+        <div class=" logo">
+  <img src="/public/assets/images/logo.svg" alt="Logo">
+  </div>
+
+  <div class="profile-box">
+    <span onClick="location.href='profile.html';">Profile</span>
+    <img class='profile' src="/public/assets/images/profile.svg" onClick="location.href='page.html';">
+  </div>
+
+  </header>
+
+
+
+
+  <section class="popular container" id="popular">
+    <div class="heading">
+      <h2 class="heading-title">Popular films</h2>
+      <div class="search-box">
+        <input type="search" name="" class="search-input" placeholder="Cerca un film">
+        <img class='bx bx-search' src="/public/assets/images/search-white.svg">
+      </div>
+    </div>
+
+    <div class="swiper-container">
+
+      <div class="swiper-wrapper">
+
+        <div class="swiper-slide">
+          <img
+            src="https://m.media-amazon.com/images/M/MV5BZDEyN2NhMjgtMjdhNi00MmNlLWE5YTgtZGE4MzNjMTRlMGEwXkEyXkFqcGdeQXVyNDUyOTg3Njg@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img
+            src="https://m.media-amazon.com/images/M/MV5BMzY2ODk4NmUtOTVmNi00ZTdkLTlmOWYtMmE2OWVhNTU2OTVkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img
+            src="https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img src="https://m.media-amazon.com/images/M/MV5BMjMyOTM4MDMxNV5BMl5BanBnXkFtZTcwNjIyNzExOA@@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img src="https://m.media-amazon.com/images/M/MV5BOTA5NDYxNTg0OV5BMl5BanBnXkFtZTgwODE5NzU1MTE@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img
+            src="https://m.media-amazon.com/images/M/MV5BMzI0NmVkMjEtYmY4MS00ZDMxLTlkZmEtMzU4MDQxYTMzMjU2XkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img
+            src="https://m.media-amazon.com/images/M/MV5BMzI0NmVkMjEtYmY4MS00ZDMxLTlkZmEtMzU4MDQxYTMzMjU2XkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_SX300.jpg">
+        </div>
+        <div class="swiper-slide">
+          <img
+            src="https://m.media-amazon.com/images/M/MV5BMzI0NmVkMjEtYmY4MS00ZDMxLTlkZmEtMzU4MDQxYTMzMjU2XkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_SX300.jpg">
         </div>
 
-        <div class="profile-box" >
-            <span onClick="location.href='profile.html';">Profile</span>
-            <img class='profile' src="/public/assets/images/profile.svg"
-            onClick="location.href='page.html';">
-        </div>
-        
-    </header>
 
+      </div>
+      
+    </div>
     
+    <button class="swiper-button-prev">&lt;</button>
+    <button class="swiper-button-next">&gt;</button>
 
 
-    <section class="popular container" id="popular">
-        <div class="heading">
-            <h2 class="heading-title">Popular films</h2>
-            <div class="search-box">
-                <input type="search" name="" class="search-input" placeholder="Cerca un film">
-                <img class='bx bx-search' src="/public/assets/images/search-white.svg">
-            </div>
-        </div>
+  </section>
 
-
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BZDEyN2NhMjgtMjdhNi00MmNlLWE5YTgtZGE4MzNjMTRlMGEwXkEyXkFqcGdeQXVyNDUyOTg3Njg@._V1_SX300.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BMzY2ODk4NmUtOTVmNi00ZTdkLTlmOWYtMmE2OWVhNTU2OTVkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BYTk3MDljOWQtNGI2My00OTEzLTlhYjQtOTQ4ODM2MzUwY2IwXkEyXkFqcGdeQXVyNTIzOTk5ODM@._V1_SX300.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BMjMyOTM4MDMxNV5BMl5BanBnXkFtZTcwNjIyNzExOA@@._V1_SX300.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BOTA5NDYxNTg0OV5BMl5BanBnXkFtZTgwODE5NzU1MTE@._V1_SX300.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_SX300.jpg">
-              </div>
-              <div class="swiper-slide">
-                <img src="https://m.media-amazon.com/images/M/MV5BMzI0NmVkMjEtYmY4MS00ZDMxLTlkZmEtMzU4MDQxYTMzMjU2XkEyXkFqcGdeQXVyMzQ0MzA0NTM@._V1_SX300.jpg">
-              </div>
-              
-            </div>
-          </div>
-          
-          <button class="swiper-button-prev">&lt;</button>
-          <button class="swiper-button-next">&gt;</button>
-
-    </section>
-
-    <section class="movies container hidden" id="search-results">
+  <!-- <section class="movies container hidden" id="search-results">
 
         <div class="heading">
             <h2 class="heading-title">Risultati della Ricerca</h2>
@@ -89,11 +110,11 @@
             </div>
         </div>
 
-    </section>
+    </section> -->
 
 
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="/public/assets/script/home.js"></script>
-    </body>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="/public/assets/script/home.js"></script>
+  </body>
 
 </html>
