@@ -110,6 +110,9 @@ app.post("/login", (req, res) => {
   })
 })
 
+
+
+
 async function richiestaEsterna(url) {
   try {
     const response = await axios.get(url);
@@ -117,6 +120,26 @@ async function richiestaEsterna(url) {
   } catch (error) {
     throw error;
   }
+}
+
+
+function controllaID(imdbID) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      'SELECT * FROM media WHERE imdbID = ?',
+      [imdbID],
+      (err, results) => {
+        if (err) {
+          console.error('Errore nella verifica dei dati nel database:', err);
+          reject(err);
+        } else if (results.length > 0) {
+          resolve(true); // L'imdbID esiste già nel database
+        } else {
+          resolve(false); // L'imdbID non esiste nel database
+        }
+      }
+    );
+  });
 }
 
 app.post('/api/request-to-server', async (req, res) => {
@@ -128,28 +151,25 @@ app.post('/api/request-to-server', async (req, res) => {
     const rispostaEsterna = await richiestaEsterna(url);
     console.log('Risposta dal server esterno:', rispostaEsterna);
     for (const movie of rispostaEsterna.Search) {
-      Dati = {
-        imdbID:movie.imdbID,
-        title:movie.Title,
-        year:movie.Year,
-        type:movie.Type,
-        plot:movie.Plot,
-        poster:movie.Poster
-      }
-      console.log(movie.Title)
-;      var sql = "INSERT INTO media SET ?";
-        connection.query(sql, { imdbID:Dati.imdbID, title:Dati.title, year:Dati.year, type:Dati.type, plot:Dati.plot, poster:Dati.poster },  (err, results) => {
-          if (err) {
-            console.error('Errore nell\'inserimento dei dati nel database:', err);
-            res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
-            return;
-          } else {
-            // Invia la risposta al client includendo i dati dal server esterno
-            console.log("inserito");
-          }
-        })
-    }
     
+      const imdbIDExists = await controllaID(movie.imdbID);
+      if (imdbIDExists) {
+        continue; // Salta l'iterazione e continua con il prossimo film
+      }
+      
+      var sql = "INSERT INTO media SET ?";
+      connection.query(sql, { imdbID: movie.imdbID, title: movie.title, year: movie.year, type: movie.type, plot: movie.plot, poster: movie.poster }, (err, results) => {
+        if (err) {
+          console.error('Errore nell\'inserimento dei dati nel database:', err);
+          res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+          return;
+        } else {
+          // Invia la risposta al client includendo i dati dal server esterno
+          console.log("inserito");
+        }
+      })
+    }
+
 
     // PRIMA DI INVIARE LA RISPOSTA, DEVO SALVARMELI
     res.json({ message: 'Richiesta al server eseguita con successo!', data: rispostaEsterna });
