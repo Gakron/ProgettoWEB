@@ -110,7 +110,34 @@ app.post("/login", (req, res) => {
   })
 })
 
+app.post('/api/request-local', async (req, res) => {
+  try {
+    const { title, url } = req.body;
+    console.log('Titolo:', title);
 
+    connection.query(
+      'SELECT * FROM media WHERE title LIKE ?',
+      [`%${title}%`],
+      (err, results) => {
+        if (err) {
+          console.error('Errore nella verifica dei dati nel database:', err);
+          res.status(500).json({ error: 'Errore nella verifica dei dati nel database' });
+        } else {
+          if (results.length > 0) {
+            // I dati sono stati trovati nel database, invia la risposta al client
+            res.json({ message: 'Richiesta al db eseguita', data: results });
+          } else {
+            // Il titolo non è stato trovato nel database, invia un messaggio al client
+            res.json({ message: 'Titolo non trovato nel database', data: null });
+          }
+        }
+      }
+    );
+    } catch (error) {
+      console.error('Errore nella richiesta al db:', error);
+      res.status(500).json({ error: 'Errore nella richiesta al db' });
+    }
+});
 
 
 async function richiestaEsterna(url) {
@@ -142,6 +169,7 @@ function controllaID(imdbID) {
   });
 }
 
+
 app.post('/api/request-to-server', async (req, res) => {
   try {
     const { title, url } = req.body;
@@ -156,7 +184,7 @@ app.post('/api/request-to-server', async (req, res) => {
       if (imdbIDExists) {
         continue; // Salta l'iterazione e continua con il prossimo film
       }
-      
+
       var sql = "INSERT INTO media SET ?";
       connection.query(sql, { imdbID: movie.imdbID, title: movie.title, year: movie.year, type: movie.type, plot: movie.plot, poster: movie.poster }, (err, results) => {
         if (err) {
@@ -164,14 +192,12 @@ app.post('/api/request-to-server', async (req, res) => {
           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
           return;
         } else {
-          // Invia la risposta al client includendo i dati dal server esterno
           console.log("inserito");
         }
       })
     }
 
-
-    // PRIMA DI INVIARE LA RISPOSTA, DEVO SALVARMELI
+  //ORA CHE LI HO SALVATI POSSO FARE LA RICERCA! FINALLY
     res.json({ message: 'Richiesta al server eseguita con successo!', data: rispostaEsterna });
   } catch (error) {
     console.error('Errore nella richiesta al server:', error);

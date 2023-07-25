@@ -59,45 +59,41 @@ window.onload = () => {
         },
 
 
+        searchMovieLocal: async function (title) {
+            this.changeSection("search-results");
+            const wrapper = document.querySelector("#search-results .swiper-wrapper");
+            wrapper.innerHTML = "";
+            try {
+                const url = this.getHost() + "s=" + title + "&";
+                const response = await axios.post('http://localhost:3000/api/request-local', { title, url })
+                console.log(response);
+                for (const movie of response.data.data) {
+                    if (movie.Poster === "N/A") {
+                        continue;
+                    }
+                    const swiperSlide = document.createElement("div");
+                    swiperSlide.classList.add("swiper-slide");
 
-        // searchMovie: async function (title) {
-        //     this.changeSection("search-results");
-        //     const risposta = (await axios.get(this.getHost() + "s=" + title + "&")).data;
+                    const filmImg = document.createElement("img");
+                    filmImg.setAttribute("src", movie.poster);
 
+                    filmImg.addEventListener("click", () => {
+                        this.getMovieInfo(movie);
+                    });
 
-        //     const swiperWrapper = document.querySelector("#search-results .swiper-wrapper")
-        //     swiperWrapper.innerHTML = "";
-        //     console.log(risposta);
-
-        //   
-        //     for (const movie of risposta.Search) {
-
-
-        //         const swiperSlide = document.createElement("div");
-        //         swiperSlide.classList.add("swiper-slide");
-
-        //         const filmImg = document.createElement("img");
-        //         filmImg.setAttribute("src", movie.Poster);
-
-        //         filmImg.addEventListener("click", () => {
-        //             this.getMovieInfo(movie);
-        //         });
-
-
-        //         swiperSlide.appendChild(filmImg);
-        //         swiperWrapper.appendChild(swiperSlide);
-
-        //     }
-
-        // },
-
-
+                    swiperSlide.appendChild(filmImg);
+                    wrapper.appendChild(swiperSlide);
+                }
+            } catch (error) {
+                console.error('Errore nella richiesta al server:', error);
+            }
+        },
 
 
         searchMovie: async function (title) {
             this.changeSection("search-results");
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
-            wrapper.innerHTML="";
+            wrapper.innerHTML = "";
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
@@ -105,7 +101,7 @@ window.onload = () => {
                 console.log(response);
 
                 for (const movie of response.data.data.Search) {
-                    if(movie.Poster==="N/A"){
+                    if (movie.Poster === "N/A") {
                         continue;
                     }
                     const swiperSlide = document.createElement("div");
@@ -118,10 +114,8 @@ window.onload = () => {
                         this.getMovieInfo(movie);
                     });
 
-
                     swiperSlide.appendChild(filmImg);
                     wrapper.appendChild(swiperSlide);
-
                 }
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
@@ -212,7 +206,7 @@ window.onload = () => {
     searchButtons.forEach(button => {
         button.addEventListener("keydown", async (event) => {
             if (!event.isComposing && event.key === "Enter") {
-                Ricerca.searchMovie(event.target.value);
+                Ricerca.searchMovieLocal(event.target.value);
             }
         })
     });
