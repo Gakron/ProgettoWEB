@@ -112,8 +112,8 @@ header {
 
     overflow: hidden;
     max-width: 100%;
-    margin-left: 80px;
-    margin-right: 80px;
+    margin-left: 60px;
+    margin-right: 60px;
 }
 
 .swiper-wrapper {
@@ -123,13 +123,12 @@ header {
 
 .swiper-wrapper img {
     height: 250px;
-    width: 100%;
+    width: 180px;
     cursor: pointer;
 
 }
 
 .swiper-slide {
-    flex: 0 0 calc(100% / 6);
     /* Per visualizzare massimo 6 film alla volta */
     padding: 20px;
     box-sizing: border-box;
@@ -139,7 +138,6 @@ header {
 
 @media screen and (max-width: 1050px) {
     .swiper-slide {
-        flex: 0 0 calc(100% / 5);
         /* Per visualizzare massimo 5 film alla volta */
         padding: 20px;
         box-sizing: border-box;
@@ -148,26 +146,19 @@ header {
 
 @media screen and (max-width: 950px) {
     .swiper-slide {
-        flex: 0 0 calc(100% / 4);
         /* Per visualizzare massimo 4 film alla volta */
-        padding: 15px;
+        padding: 20px;
         box-sizing: border-box;
     }
 
-    .swiper-container {
-        display: flex;
-        overflow: hidden;
-        max-width: 100%;
-        margin-left: 50px;
-        margin-right: 50px;
-    }
+
 }
 
 @media screen and (max-width: 650px) {
     .swiper-slide {
-        flex: 0 0 calc(100% / 3);
+        /* flex: 0 0 calc(100% / 3); */
         /* Per visualizzare massimo 3 film alla volta */
-        padding: 15px;
+        padding: 20px;
         box-sizing: border-box;
     }
 }
@@ -180,9 +171,9 @@ header {
     }
 
     .swiper-slide {
-        flex: 0 0 calc(100% / 2);
+        /* flex: 0 0 calc(100% / 2); */
         /* Per visualizzare massimo 2 film alla volta */
-        padding: 10px;
+        padding: 20px;
         box-sizing: border-box;
     }
   } 
@@ -216,6 +207,7 @@ header {
 .swiper-button-next {
     top: 300px;
     right: 20px;
+    margin-left:20px;
 }
 
 .swiper-button-prev {

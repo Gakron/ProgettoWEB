@@ -2,25 +2,49 @@
 const containerDom = document.querySelector("#search-results>.movies-content");
 const swiperContainer = document.querySelector('.swiper-container');
 const swiperWrapper = document.querySelector('.swiper-wrapper');
+
 const prevButton = document.querySelector('.swiper-button-prev');
 const nextButton = document.querySelector('.swiper-button-next');
 const slideWidth = 220; // Larghezza della slide, considerando margini
 
 let currentPosition = 0;
+// document.getElementsByClassName
+
 
 prevButton.addEventListener('click', () => {
-  currentPosition = Math.max(currentPosition - slideWidth, 0);
-  updateSwiperPosition();
+    currentPosition = Math.max(currentPosition - slideWidth, 0);
+    updateSwiperPosition();
 });
 
 nextButton.addEventListener('click', () => {
-  const maxPosition = swiperWrapper.scrollWidth - swiperContainer.offsetWidth;
-  currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
-  updateSwiperPosition();
+    let maxPosition = swiperWrapper.scrollWidth - swiperContainer.offsetWidth;
+    currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
+    updateSwiperPosition();
 });
 
+
 function updateSwiperPosition() {
-  swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
+    swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
+}
+
+const swiperWrapper2 = document.querySelector('#search-results .swiper-wrapper');
+const swiperContainer2 = document.querySelector('#search-results .swiper-container');
+
+const prevButton2 = document.querySelector('#search-results .swiper-button-prev');
+const nextButton2 = document.querySelector('#search-results .swiper-button-next');
+
+prevButton2.addEventListener('click', () => {
+    currentPosition = Math.max(currentPosition - slideWidth, 0);
+    updateSwiperPosition2();
+});
+nextButton2.addEventListener('click', () => {
+    let maxPosition = swiperWrapper2.scrollWidth - swiperContainer2.offsetWidth;
+    currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
+    updateSwiperPosition2();
+});
+
+function updateSwiperPosition2() {
+    swiperWrapper2.style.transform = `translateX(-${currentPosition}px)`;
 }
 
 
@@ -34,36 +58,72 @@ window.onload = () => {
             return "https://" + this.urlServer + "/?apikey=" + this.apiKey + "&"
         },
 
+
+
+        // searchMovie: async function (title) {
+        //     this.changeSection("search-results");
+        //     const risposta = (await axios.get(this.getHost() + "s=" + title + "&")).data;
+
+
+        //     const swiperWrapper = document.querySelector("#search-results .swiper-wrapper")
+        //     swiperWrapper.innerHTML = "";
+        //     console.log(risposta);
+
+        //   
+        //     for (const movie of risposta.Search) {
+
+
+        //         const swiperSlide = document.createElement("div");
+        //         swiperSlide.classList.add("swiper-slide");
+
+        //         const filmImg = document.createElement("img");
+        //         filmImg.setAttribute("src", movie.Poster);
+
+        //         filmImg.addEventListener("click", () => {
+        //             this.getMovieInfo(movie);
+        //         });
+
+
+        //         swiperSlide.appendChild(filmImg);
+        //         swiperWrapper.appendChild(swiperSlide);
+
+        //     }
+
+        // },
+
+
+
+
         searchMovie: async function (title) {
             this.changeSection("search-results");
-            const risposta = (await axios.get(this.getHost() + "s=" + title + "&")).data;
 
-            const swiperContainer = document.querySelector("#search-results .swiper-container");
-            swiperContainer.innerHTML="";
+            try {
+                const url = this.getHost() + "s=" + title + "&";
+                const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
+                for (const movie of response.data.data.Search) {
+                    const wrapper=document.querySelector("#search-results .swiper-wrapper");
+                    const swiperSlide = document.createElement("div");
+                    swiperSlide.classList.add("swiper-slide");
 
-            for (const movie of risposta.Search) {
-                
-                
-                const swiperWrapper = document.createElement("div");
-                swiperWrapper.classList.add("swiper-wrapper");
+                    const filmImg = document.createElement("img");
+                    filmImg.setAttribute("src", movie.Poster);
 
-                const swiperSlide = document.createElement("img");
-                swiperSlide.classList.add("swiper-slide");
-                swiperSlide.setAttribute("src", movie.Poster);
-
-                swiperSlide.addEventListener("click", () => {
-                    this.getMovieInfo(movie);
-                });
+                    filmImg.addEventListener("click", () => {
+                        this.getMovieInfo(movie);
+                    });
 
 
+                    swiperSlide.appendChild(filmImg);
+                    wrapper.appendChild(swiperSlide);
 
-                swiperWrapper.appendChild(swiperSlide);
-
-
-                swiperContainer.appendChild(swiperWrapper);
+                }
+            } catch (error) {
+                console.error('Errore nella richiesta al server:', error);
             }
 
+
         },
+
 
         testPromiseLastMovies: function () {
             return new Promise((resolve, reject) => {
@@ -78,15 +138,15 @@ window.onload = () => {
             });
         },
 
-        getLastMovies : async function(){
+        getLastMovies: async function () {
             const risposta = await this.testPromiseLastMovies();
 
             const containerDom = document.querySelector("#search-results>.movies-content");
             containerDom.innerHTML = "";
 
-            for(const movie of risposta.Search){
-              console.log(movie)
-              const domString = `<div class="swiper-slide">
+            for (const movie of risposta.Search) {
+                console.log(movie)
+                const domString = `<div class="swiper-slide">
               <div class="movie-box">
                     <img class="movie-box-img" src="${movie.Poster}">
                     <div class="box-text">
@@ -98,11 +158,11 @@ window.onload = () => {
                     </div>
                 </div>
             </div>`;
-            containerDom.innerHTML+=domString;
+                containerDom.innerHTML += domString;
             }
-          },
+        },
 
-        getMovieInfo: async function(movie) {
+        getMovieInfo: async function (movie) {
             this.changeSection("loader");
             const risposta = (await axios.get(this.getHost() + "i=" + movie.imdbID)).data;
 
@@ -124,27 +184,32 @@ window.onload = () => {
 
         },
 
-    //UI
+        //UI
 
-    sectionOpened: "popular",
-        changeSection : function(name) {
+        sectionOpened: "popular",
+        changeSection: function (name) {
             const secOld = document.getElementById(this.sectionOpened);
             secOld.classList.add("hidden");
             this.sectionOpened = name;
             const secNew = document.getElementById(this.sectionOpened);
             secNew.classList.remove("hidden");
         }
+    };
+
+
+
+    //send the request
+
+    const searchButtons = document.querySelectorAll(".search-input");
+
+    searchButtons.forEach(button => {
+        button.addEventListener("keydown", async (event) => {
+            if (!event.isComposing && event.key === "Enter") {
+                Ricerca.searchMovie(event.target.value);
+            }
+        })
+    });
+    console.log(searchButtons);
+
+    Ricerca.getLastMovies();
 };
-
-
-
-//send the request
-document.querySelector(".search-input").addEventListener("keydown", async (event) => {
-    if (!event.isComposing && event.key === "Enter") {
-        Ricerca.searchMovie(event.target.value);
-    }
-});
-
-
-Ricerca.getLastMovies();
-  };

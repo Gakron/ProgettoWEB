@@ -8,7 +8,7 @@ app.use(cors());
 
 
 
-const axios= require("axios");
+const axios = require("axios");
 
 
 const mysql = require('mysql2');
@@ -93,23 +93,49 @@ app.post("/login", (req, res) => {
       res.sendStatus(500);
       return;
     }
-    else if(data.length == 0){
+    else if (data.length == 0) {
       res.statusMessage = "Utente non registrato";
       res.sendStatus(404);
       return;
     }
-    else if(data[0].password!=password){
+    else if (data[0].password != password) {
       res.statusMessage = "Password Errata";
       res.sendStatus(403);
       return;
     }
-    else{
+    else {
       res.sendStatus(200);
-      return;s
+      return; s
     }
   })
 })
 
+async function richiestaEsterna (url) {
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+app.post('/api/request-to-server', async (req, res) => {
+  try {
+    const { title, url } = req.body;
+    console.log('Titolo:', title);
+    console.log('URL:', url);
+
+    const rispostaEsterna = await richiestaEsterna(url);
+    console.log('Risposta dal server esterno:', rispostaEsterna);
+
+    // PRIMA DI INVIARE LA RISPOSTA, DEVO SALVARMELI
+    res.json({ message: 'Richiesta al server eseguita con successo!', data: rispostaEsterna });
+  }catch (error) {
+    console.error('Errore nella richiesta al server:', error);
+    res.status(500).json({ error: 'Errore nella richiesta al server' });
+  }
+  
+});
 
 
 
