@@ -187,7 +187,6 @@ app.post('/api/request-to-server', async (req, res) => {
       rispostaEsterna3,
       rispostaEsterna4 // Assicurati di aggiungere tutti gli array rispostaEsterna.Search qui
     ];
-    console.log(risposteEsternaArray);
 
     const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
       const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
@@ -195,8 +194,7 @@ app.post('/api/request-to-server', async (req, res) => {
     }, []);
 
 
-    console.log('Risposta dal server esterno:', rispostaEsterna);
-    console.log(concatenatedArray);
+    console.log('Risposta dal server esterno ricevuta');
 
     for (const movie of concatenatedArray) {
       const imdbIDExists = await controllaID(movie.imdbID);

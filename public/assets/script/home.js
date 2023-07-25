@@ -67,6 +67,7 @@ window.onload = () => {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-local', { title, url })
                 console.log(response);
+
                 for (const movie of response.data.data) {
                     if (movie.Poster === "N/A") {
                         continue;
@@ -94,12 +95,32 @@ window.onload = () => {
             this.changeSection("search-results");
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
             wrapper.innerHTML = "";
+
+
+            const header = document.querySelector("#search-results .heading");
+
+            const prevHeadingTitle = header.querySelector(".heading-title");
+            if (prevHeadingTitle) {
+                prevHeadingTitle.remove();
+            }
+
+            const h2Element = document.createElement("h2");
+            h2Element.classList.add("heading-title");
+            h2Element.textContent = `Risultati della ricerca`;
+            header.appendChild(h2Element);
+
+            const filmResults = [];
+            const serieResults = [];
+
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
-                debugger;
-                console.log(response);
 
+
+                
+
+                const totalResults = response.data.data.length;
+                h2Element.textContent = `Risultati della ricerca: ${totalResults} `;
                 for (const movie of response.data.data) {
                     if (movie.Poster === "N/A") {
                         continue;
