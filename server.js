@@ -179,14 +179,14 @@ app.post('/api/request-to-server', async (req, res) => {
     const rispostaEsterna = await richiestaEsterna(url);
     console.log('Risposta dal server esterno:', rispostaEsterna);
     for (const movie of rispostaEsterna.Search) {
-    
+      console.log(movie);
       const imdbIDExists = await controllaID(movie.imdbID);
       if (imdbIDExists) {
         continue; // Salta l'iterazione e continua con il prossimo film
       }
 
       var sql = "INSERT INTO media SET ?";
-      connection.query(sql, { imdbID: movie.imdbID, title: movie.title, year: movie.year, type: movie.type, plot: movie.plot, poster: movie.poster }, (err, results) => {
+      connection.query(sql, { imdbID: movie.imdbID, title: movie.Title, year: movie.Year, type: movie.Type, plot: movie.Plot, poster: movie.Poster }, (err, results) => {
         if (err) {
           console.error('Errore nell\'inserimento dei dati nel database:', err);
           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
