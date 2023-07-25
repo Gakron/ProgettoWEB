@@ -133,10 +133,10 @@ app.post('/api/request-local', async (req, res) => {
         }
       }
     );
-    } catch (error) {
-      console.error('Errore nella richiesta al db:', error);
-      res.status(500).json({ error: 'Errore nella richiesta al db' });
-    }
+  } catch (error) {
+    console.error('Errore nella richiesta al db:', error);
+    res.status(500).json({ error: 'Errore nella richiesta al db' });
+  }
 });
 
 
@@ -176,10 +176,29 @@ app.post('/api/request-to-server', async (req, res) => {
     console.log('Titolo:', title);
     console.log('URL:', url);
 
-    const rispostaEsterna = await richiestaEsterna(url);
+    const rispostaEsterna = await richiestaEsterna(url + "type=movie&");
+    const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
+    const rispostaEsterna3 = await richiestaEsterna(url + "type=series&");
+    const rispostaEsterna4 = await richiestaEsterna(url + "type=series&page=2&");
+
+    const risposteEsternaArray = [
+      rispostaEsterna,
+      rispostaEsterna2,
+      rispostaEsterna3,
+      rispostaEsterna4 // Assicurati di aggiungere tutti gli array rispostaEsterna.Search qui
+    ];
+    console.log(risposteEsternaArray);
+
+    const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
+      const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
+      return result.concat(searchArray);
+    }, []);
+
+
     console.log('Risposta dal server esterno:', rispostaEsterna);
-    for (const movie of rispostaEsterna.Search) {
-      console.log(movie);
+    console.log(concatenatedArray);
+
+    for (const movie of concatenatedArray) {
       const imdbIDExists = await controllaID(movie.imdbID);
       if (imdbIDExists) {
         continue; // Salta l'iterazione e continua con il prossimo film
@@ -197,8 +216,8 @@ app.post('/api/request-to-server', async (req, res) => {
       })
     }
 
-  //ORA CHE LI HO SALVATI POSSO FARE LA RICERCA! FINALLY
-    res.json({ message: 'Richiesta al server eseguita con successo!', data: rispostaEsterna });
+    //ORA CHE LI HO SALVATI POSSO FARE LA RICERCA! FINALLY
+    res.json({ message: 'Richiesta al server eseguita con successo!', data: concatenatedArray });
   } catch (error) {
     console.error('Errore nella richiesta al server:', error);
     res.status(500).json({ error: 'Errore nella richiesta al server' });

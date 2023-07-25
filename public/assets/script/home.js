@@ -97,10 +97,10 @@ window.onload = () => {
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
-
+                debugger;
                 console.log(response);
 
-                for (const movie of response.data.data.Search) {
+                for (const movie of response.data.data) {
                     if (movie.Poster === "N/A") {
                         continue;
                     }
@@ -120,48 +120,45 @@ window.onload = () => {
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
             }
-
-
-
         },
 
 
-        testPromiseLastMovies: function () {
-            return new Promise((resolve, reject) => {
-                axios.get(this.getHost() + "s=super mario&type=movie")
-                    .then((risposta) => {
+        // testPromiseLastMovies: function () {
+        //     return new Promise((resolve, reject) => {
+        //         axios.get(this.getHost() + "s=super mario&type=movie")
+        //             .then((risposta) => {
 
-                        resolve(risposta.data);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    })
-            });
-        },
+        //                 resolve(risposta.data);
+        //             })
+        //             .catch((err) => {
+        //                 reject(err);
+        //             })
+        //     });
+        // },
 
-        getLastMovies: async function () {
-            const risposta = await this.testPromiseLastMovies();
+        // getLastMovies: async function () {
+        //     const risposta = await this.testPromiseLastMovies();
 
-            const containerDom = document.querySelector("#search-results>.movies-content");
-            containerDom.innerHTML = "";
+        //     const containerDom = document.querySelector("#search-results>.movies-content");
+        //     containerDom.innerHTML = "";
 
-            for (const movie of risposta.Search) {
-                console.log(movie)
-                const domString = `<div class="swiper-slide">
-              <div class="movie-box">
-                    <img class="movie-box-img" src="${movie.Poster}">
-                    <div class="box-text">
-                        <h2 class="movie-title">${movie.Title}</h2>
-                        <span class="movie-type">${movie.Year}</span>
-                        <a href="#" class="watch-btn play-btn">
-                            <i class="bx bx-right-arrow"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>`;
-                containerDom.innerHTML += domString;
-            }
-        },
+        //     for (const movie of risposta.Search) {
+        //         console.log(movie)
+        //         const domString = `<div class="swiper-slide">
+        //       <div class="movie-box">
+        //             <img class="movie-box-img" src="${movie.Poster}">
+        //             <div class="box-text">
+        //                 <h2 class="movie-title">${movie.Title}</h2>
+        //                 <span class="movie-type">${movie.Year}</span>
+        //                 <a href="#" class="watch-btn play-btn">
+        //                     <i class="bx bx-right-arrow"></i>
+        //                 </a>
+        //             </div>
+        //         </div>
+        //     </div>`;
+        //         containerDom.innerHTML += domString;
+        //     }
+        // },
 
         getMovieInfo: async function (movie) {
             this.changeSection("loader");
@@ -206,11 +203,11 @@ window.onload = () => {
     searchButtons.forEach(button => {
         button.addEventListener("keydown", async (event) => {
             if (!event.isComposing && event.key === "Enter") {
-                Ricerca.searchMovieLocal(event.target.value);
+                Ricerca.searchMovie(event.target.value);
             }
         })
     });
     console.log(searchButtons);
 
-    Ricerca.getLastMovies();
+    // Ricerca.getLastMovies();
 };
