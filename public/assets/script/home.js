@@ -29,7 +29,7 @@ function updateSwiperPosition() {
 // Bottoni e container per la sezione film
 const prevButtonFilm = document.querySelector('#search-results #film-swiper .swiper-button-prev');
 const nextButtonFilm = document.querySelector('#search-results #film-swiper .swiper-button-next');
-const swiperWrapperFilm=document.querySelector('#search-results #film');
+const swiperWrapperFilm = document.querySelector('#search-results #film');
 let currentPositionFilm = 0;
 
 prevButtonFilm.addEventListener('click', () => {
@@ -50,7 +50,7 @@ function updateSwiperPositionFilm() {
 // Bottoni e container per la sezione serie TV
 const prevButtonSerie = document.querySelector('#search-results #serie-swiper .swiper-button-prev');
 const nextButtonSerie = document.querySelector('#search-results #serie-swiper .swiper-button-next');
-const swiperWrapperSerie=document.querySelector('#search-results #serie');
+const swiperWrapperSerie = document.querySelector('#search-results #serie');
 let currentPositionSerie = 0;
 
 prevButtonSerie.addEventListener('click', () => {
@@ -159,6 +159,8 @@ window.onload = () => {
             const filmWrapper = document.querySelector("#search-results #film");
             filmWrapper.innerHTML = "";
 
+            const swiperTitle = document.querySelector("#search-results #swiper-title-film");
+            swiperTitle.textContent = "Film results";
             for (const movie of filmResults) {
                 const swiperSlide = document.createElement("div");
                 swiperSlide.classList.add("swiper-slide");
@@ -166,11 +168,15 @@ window.onload = () => {
                 const filmImg = document.createElement("img");
                 filmImg.setAttribute("src", movie.Poster);
 
+                const filmTitle = document.createElement("h3");
+                filmTitle.textContent = movie.Title;
+
                 filmImg.addEventListener("click", () => {
                     this.getMovieInfo(movie);
                 });
 
                 swiperSlide.appendChild(filmImg);
+                swiperSlide.appendChild(filmTitle);
                 filmWrapper.appendChild(swiperSlide);
             }
         },
@@ -179,6 +185,8 @@ window.onload = () => {
         generateSerieSlides: function (serieResults) {
             const serieWrapper = document.querySelector("#search-results #serie");
             serieWrapper.innerHTML = "";
+            const swiperTitle = document.querySelector("#search-results #swiper-title-serie");
+            swiperTitle.textContent = "Series results";
 
             for (const serie of serieResults) {
                 const swiperSlide = document.createElement("div");
@@ -187,11 +195,15 @@ window.onload = () => {
                 const serieImg = document.createElement("img");
                 serieImg.setAttribute("src", serie.Poster);
 
+                const serieTitle = document.createElement("h3"); // Creazione del tag <h3>
+                serieTitle.textContent = serie.Title; // Impostazione del testo con il titolo della serie TV
+
                 serieImg.addEventListener("click", () => {
-                    this.getSerieInfo(serie);
+                    this.getMovieInfo(serie);
                 });
 
                 swiperSlide.appendChild(serieImg);
+                swiperSlide.appendChild(serieTitle);
                 serieWrapper.appendChild(swiperSlide);
             }
         },

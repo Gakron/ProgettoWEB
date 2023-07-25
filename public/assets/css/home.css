@@ -40,7 +40,7 @@ header {
     border-radius: 4rem;
     margin-right: 1rem;
     margin-top: 15px;
-    position: absolute;    
+    position: absolute;
     top: 15px;
     right: 20px
 }
@@ -95,7 +95,7 @@ header {
 
 
 .heading {
-    
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -107,18 +107,34 @@ header {
 .heading .heading-title {
     margin-top: 50px;
     font-size: 1.2rem;
-  font-weight: 500;
+    font-weight: 500;
 }
 
 
 
 .swiper-container {
     display: flex;
-
+    margin-bottom: 20px;
     overflow: hidden;
     max-width: 100%;
     margin-left: 60px;
     margin-right: 60px;
+    justify-content: space-between;
+    /* Per allineare i bottoni a sinistra e destra */
+    align-items: center;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    border-radius: 200px 200px 200px 200px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+
 }
 
 .swiper-wrapper {
@@ -128,7 +144,7 @@ header {
 
 .swiper-wrapper img {
     height: 250px;
-    width: 180px;
+    width: 185px;
     cursor: pointer;
 
 }
@@ -170,9 +186,10 @@ header {
 
 /* Nascondi i bottoni prev/next su dispositivi con schermo piccolo */
 @media screen and (max-width: 480px) {
+
     .swiper-button-prev,
     .swiper-button-next {
-      display: none;
+        display: none;
     }
 
     .swiper-slide {
@@ -181,21 +198,10 @@ header {
         padding: 20px;
         box-sizing: border-box;
     }
-  } 
-
-
-.swiper-button-next,
-.swiper-button-prev {
-    width: 48px;
-    height: 48px;
-    position: absolute;
-    top: 50%;
-    border-radius: 200px 200px 200px 200px;
-    background-color: #333;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
 }
+
+
+
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
@@ -205,25 +211,40 @@ header {
 }
 
 .swiper-button-next {
-    top: 300px;
+    /* top: 300px; */
     right: 20px;
-    margin-left:20px;
+    margin-left: 20px;
 }
 
 .swiper-button-prev {
-    top: 300px;
+    /* top: 300px; */
     left: 20px;
 }
 
 #serie-swiper .swiper-button-next {
-    top: 600px;
+    /* top: 600px; */
     right: 20px;
-    margin-left:20px;
+    margin-left: 20px;
 }
 
 #serie-swiper .swiper-button-prev {
-    top: 600px;
+    /* top: 600px; */
     left: 20px;
+}
+
+.swiper-slide h3 {
+    font-size: 18px;
+    color: #fff;
+    text-align: center;
+    background-color: #333;
+}
+
+.swiper-title {
+    margin: 10px 0;
+    margin-left: 60px;
+    font-size: 24px;
+    color: #333;
+    text-align: left;
 }
 
 .hidden {

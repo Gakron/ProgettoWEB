@@ -185,9 +185,10 @@ app.post('/api/request-to-server', async (req, res) => {
       ...(rispostaEsterna?.Search??[]),
       ...(rispostaEsterna2?.Search??[]),
       ...(rispostaEsterna3?.Search??[]),
-      ...(rispostaEsterna4?.Search??[]) //??[]) Assicurati di aggiungere tutti gli array rispostaEsterna.Search qui
+      ...(rispostaEsterna4?.Search??[]) 
     ];
 
+    //METODO CHE USAVO PRIMA
     // const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
     //   const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
     //   return result.concat(searchArray);
