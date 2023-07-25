@@ -96,12 +96,18 @@ window.onload = () => {
 
         searchMovie: async function (title) {
             this.changeSection("search-results");
-
+            const wrapper = document.querySelector("#search-results .swiper-wrapper");
+            wrapper.innerHTML="";
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
+
+                console.log(response);
+
                 for (const movie of response.data.data.Search) {
-                    const wrapper=document.querySelector("#search-results .swiper-wrapper");
+                    if(movie.Poster==="N/A"){
+                        continue;
+                    }
                     const swiperSlide = document.createElement("div");
                     swiperSlide.classList.add("swiper-slide");
 
@@ -120,6 +126,7 @@ window.onload = () => {
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
             }
+
 
 
         },
