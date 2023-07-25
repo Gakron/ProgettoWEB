@@ -181,17 +181,17 @@ app.post('/api/request-to-server', async (req, res) => {
     const rispostaEsterna3 = await richiestaEsterna(url + "type=series&");
     const rispostaEsterna4 = await richiestaEsterna(url + "type=series&page=2&");
 
-    const risposteEsternaArray = [
-      rispostaEsterna,
-      rispostaEsterna2,
-      rispostaEsterna3,
-      rispostaEsterna4 // Assicurati di aggiungere tutti gli array rispostaEsterna.Search qui
+    const concatenatedArray = [
+      ...(rispostaEsterna?.Search??[]),
+      ...(rispostaEsterna2?.Search??[]),
+      ...(rispostaEsterna3?.Search??[]),
+      ...(rispostaEsterna4?.Search??[]) //??[]) Assicurati di aggiungere tutti gli array rispostaEsterna.Search qui
     ];
 
-    const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
-      const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
-      return result.concat(searchArray);
-    }, []);
+    // const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
+    //   const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
+    //   return result.concat(searchArray);
+    // }, []);
 
 
     console.log('Risposta dal server esterno ricevuta');

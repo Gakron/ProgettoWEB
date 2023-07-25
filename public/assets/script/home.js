@@ -8,7 +8,6 @@ const nextButton = document.querySelector('.swiper-button-next');
 const slideWidth = 220; // Larghezza della slide, considerando margini
 
 let currentPosition = 0;
-// document.getElementsByClassName
 
 
 prevButton.addEventListener('click', () => {
@@ -27,27 +26,47 @@ function updateSwiperPosition() {
     swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
 }
 
-const swiperWrapper2 = document.querySelector('#search-results .swiper-wrapper');
-const swiperContainer2 = document.querySelector('#search-results .swiper-container');
+// Bottoni e container per la sezione film
+const prevButtonFilm = document.querySelector('#search-results #film-swiper .swiper-button-prev');
+const nextButtonFilm = document.querySelector('#search-results #film-swiper .swiper-button-next');
+const swiperWrapperFilm=document.querySelector('#search-results #film');
+let currentPositionFilm = 0;
 
-const prevButton2 = document.querySelector('#search-results .swiper-button-prev');
-const nextButton2 = document.querySelector('#search-results .swiper-button-next');
-
-prevButton2.addEventListener('click', () => {
-    currentPosition = Math.max(currentPosition - slideWidth, 0);
-    updateSwiperPosition2();
-});
-nextButton2.addEventListener('click', () => {
-    let maxPosition = swiperWrapper2.scrollWidth - swiperContainer2.offsetWidth;
-    currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
-    updateSwiperPosition2();
+prevButtonFilm.addEventListener('click', () => {
+    currentPositionFilm = Math.max(currentPositionFilm - slideWidth, 0);
+    updateSwiperPositionFilm();
 });
 
-function updateSwiperPosition2() {
-    swiperWrapper2.style.transform = `translateX(-${currentPosition}px)`;
+nextButtonFilm.addEventListener('click', () => {
+    let maxPosition = swiperWrapperFilm.scrollWidth - swiperContainer.offsetWidth;
+    currentPositionFilm = Math.min(currentPositionFilm + slideWidth, maxPosition);
+    updateSwiperPositionFilm();
+});
+function updateSwiperPositionFilm() {
+    swiperWrapperFilm.style.transform = `translateX(-${currentPositionFilm}px)`;
 }
 
 
+// Bottoni e container per la sezione serie TV
+const prevButtonSerie = document.querySelector('#search-results #serie-swiper .swiper-button-prev');
+const nextButtonSerie = document.querySelector('#search-results #serie-swiper .swiper-button-next');
+const swiperWrapperSerie=document.querySelector('#search-results #serie');
+let currentPositionSerie = 0;
+
+prevButtonSerie.addEventListener('click', () => {
+    currentPositionSerie = Math.max(currentPositionSerie - slideWidth, 0);
+    updateSwiperPositionSerie();
+});
+
+nextButtonSerie.addEventListener('click', () => {
+    let maxPosition = swiperWrapperSerie.scrollWidth - swiperContainer.offsetWidth;
+    currentPositionSerie = Math.min(currentPositionSerie + slideWidth, maxPosition);
+    updateSwiperPositionSerie();
+});
+
+function updateSwiperPositionSerie() {
+    swiperWrapperSerie.style.transform = `translateX(-${currentPositionSerie}px)`;
+}
 window.onload = () => {
 
 
@@ -116,30 +135,64 @@ window.onload = () => {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
 
-
-                
-
                 const totalResults = response.data.data.length;
                 h2Element.textContent = `Risultati della ricerca: ${totalResults} `;
                 for (const movie of response.data.data) {
-                    if (movie.Poster === "N/A") {
-                        continue;
+                    if (movie.Type === "movie") {
+                        filmResults.push(movie); // Aggiungo il film all'array dei film
+                    } else if (movie.Type === "series") {
+                        serieResults.push(movie); // Aggiungo la serie TV all'array delle serie TV
                     }
-                    const swiperSlide = document.createElement("div");
-                    swiperSlide.classList.add("swiper-slide");
-
-                    const filmImg = document.createElement("img");
-                    filmImg.setAttribute("src", movie.Poster);
-
-                    filmImg.addEventListener("click", () => {
-                        this.getMovieInfo(movie);
-                    });
-
-                    swiperSlide.appendChild(filmImg);
-                    wrapper.appendChild(swiperSlide);
                 }
+                // Chiamata alla funzione per generare le slide dei film
+                this.generateFilmSlides(filmResults);
+
+                // Chiamata alla funzione per generare le slide delle serie TV
+                this.generateSerieSlides(serieResults);
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
+            }
+        },
+
+        // Funzione per generare le slide dei film
+        generateFilmSlides: function (filmResults) {
+            const filmWrapper = document.querySelector("#search-results #film");
+            filmWrapper.innerHTML = "";
+
+            for (const movie of filmResults) {
+                const swiperSlide = document.createElement("div");
+                swiperSlide.classList.add("swiper-slide");
+
+                const filmImg = document.createElement("img");
+                filmImg.setAttribute("src", movie.Poster);
+
+                filmImg.addEventListener("click", () => {
+                    this.getMovieInfo(movie);
+                });
+
+                swiperSlide.appendChild(filmImg);
+                filmWrapper.appendChild(swiperSlide);
+            }
+        },
+
+        // Funzione per generare le slide delle serie TV
+        generateSerieSlides: function (serieResults) {
+            const serieWrapper = document.querySelector("#search-results #serie");
+            serieWrapper.innerHTML = "";
+
+            for (const serie of serieResults) {
+                const swiperSlide = document.createElement("div");
+                swiperSlide.classList.add("swiper-slide");
+
+                const serieImg = document.createElement("img");
+                serieImg.setAttribute("src", serie.Poster);
+
+                serieImg.addEventListener("click", () => {
+                    this.getSerieInfo(serie);
+                });
+
+                swiperSlide.appendChild(serieImg);
+                serieWrapper.appendChild(swiperSlide);
             }
         },
 
@@ -213,7 +266,12 @@ window.onload = () => {
             const secNew = document.getElementById(this.sectionOpened);
             secNew.classList.remove("hidden");
         }
+
+
+
     };
+
+
 
 
 

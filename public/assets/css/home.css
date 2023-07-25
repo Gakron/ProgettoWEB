@@ -184,8 +184,6 @@ header {
   } 
 
 
-
-
 .swiper-button-next,
 .swiper-button-prev {
     width: 48px;
@@ -214,6 +212,17 @@ header {
 
 .swiper-button-prev {
     top: 300px;
+    left: 20px;
+}
+
+#serie-swiper .swiper-button-next {
+    top: 600px;
+    right: 20px;
+    margin-left:20px;
+}
+
+#serie-swiper .swiper-button-prev {
+    top: 600px;
     left: 20px;
 }
 
