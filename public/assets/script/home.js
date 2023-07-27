@@ -26,47 +26,11 @@ function updateSwiperPosition() {
     swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
 }
 
-// Bottoni e container per la sezione film
-const prevButtonFilm = document.querySelector('#search-results #film-swiper .swiper-button-prev');
-const nextButtonFilm = document.querySelector('#search-results #film-swiper .swiper-button-next');
-const swiperWrapperFilm = document.querySelector('#search-results #film');
-let currentPositionFilm = 0;
-
-prevButtonFilm.addEventListener('click', () => {
-    currentPositionFilm = Math.max(currentPositionFilm - slideWidth, 0);
-    updateSwiperPositionFilm();
-});
-
-nextButtonFilm.addEventListener('click', () => {
-    let maxPosition = swiperWrapperFilm.scrollWidth - swiperContainer.offsetWidth;
-    currentPositionFilm = Math.min(currentPositionFilm + slideWidth, maxPosition);
-    updateSwiperPositionFilm();
-});
-function updateSwiperPositionFilm() {
-    swiperWrapperFilm.style.transform = `translateX(-${currentPositionFilm}px)`;
-}
 
 
-// Bottoni e container per la sezione serie TV
-const prevButtonSerie = document.querySelector('#search-results #serie-swiper .swiper-button-prev');
-const nextButtonSerie = document.querySelector('#search-results #serie-swiper .swiper-button-next');
-const swiperWrapperSerie = document.querySelector('#search-results #serie');
-let currentPositionSerie = 0;
 
-prevButtonSerie.addEventListener('click', () => {
-    currentPositionSerie = Math.max(currentPositionSerie - slideWidth, 0);
-    updateSwiperPositionSerie();
-});
 
-nextButtonSerie.addEventListener('click', () => {
-    let maxPosition = swiperWrapperSerie.scrollWidth - swiperContainer.offsetWidth;
-    currentPositionSerie = Math.min(currentPositionSerie + slideWidth, maxPosition);
-    updateSwiperPositionSerie();
-});
 
-function updateSwiperPositionSerie() {
-    swiperWrapperSerie.style.transform = `translateX(-${currentPositionSerie}px)`;
-}
 window.onload = () => {
 
 
@@ -158,9 +122,18 @@ window.onload = () => {
         generateFilmSlides: function (filmResults) {
             const filmWrapper = document.querySelector("#search-results #film");
             filmWrapper.innerHTML = "";
-
             const swiperTitle = document.querySelector("#search-results #swiper-title-film");
             swiperTitle.textContent = "Film results";
+
+            const prev = document.createElement("button");
+            prev.textContent = "<";
+            prev.classList.add("swiper-button-prev")
+
+
+            const next = document.createElement("button");
+            next.textContent = ">";
+            next.classList.add("swiper-button-next");
+
             for (const movie of filmResults) {
                 const swiperSlide = document.createElement("div");
                 swiperSlide.classList.add("swiper-slide");
@@ -179,6 +152,29 @@ window.onload = () => {
                 swiperSlide.appendChild(filmTitle);
                 filmWrapper.appendChild(swiperSlide);
             }
+
+            const swiperWrapperFilm = document.querySelector('#search-results #film-swiper');
+
+            swiperWrapperFilm.appendChild(prev);
+            swiperWrapperFilm.appendChild(next);
+
+            let currentPositionFilm = 0;
+
+            prev.addEventListener('click', () => {
+                currentPositionFilm = Math.max(currentPositionFilm - slideWidth, 0);
+                updateSwiperPositionFilm();
+            });
+            
+            next.addEventListener('click', () => {
+                let maxPosition = filmWrapper.scrollWidth - swiperContainer.offsetWidth;
+                currentPositionFilm = Math.min(currentPositionFilm + slideWidth, maxPosition);
+                updateSwiperPositionFilm();
+            });
+            function updateSwiperPositionFilm() {
+                filmWrapper.style.transform = `translateX(-${currentPositionFilm}px)`;
+            }
+            
+
         },
 
         // Funzione per generare le slide delle serie TV
@@ -187,6 +183,15 @@ window.onload = () => {
             serieWrapper.innerHTML = "";
             const swiperTitle = document.querySelector("#search-results #swiper-title-serie");
             swiperTitle.textContent = "Series results";
+
+            const prev = document.createElement("button");
+            prev.textContent = "<";
+            prev.classList.add("swiper-button-prev")
+
+
+            const next = document.createElement("button");
+            next.textContent = ">";
+            next.classList.add("swiper-button-next");
 
             for (const serie of serieResults) {
                 const swiperSlide = document.createElement("div");
@@ -206,6 +211,28 @@ window.onload = () => {
                 swiperSlide.appendChild(serieTitle);
                 serieWrapper.appendChild(swiperSlide);
             }
+            
+            const swiperWrapperSerie = document.querySelector('#search-results #serie-swiper');
+
+            swiperWrapperSerie.appendChild(prev);
+            swiperWrapperSerie.appendChild(next);
+
+            let currentPositionSerie = 0;
+
+            prev.addEventListener('click', () => {
+                currentPositionSerie = Math.max(currentPositionSerie - slideWidth, 0);
+                updateSwiperPositionSerie();
+            });
+
+            next.addEventListener('click', () => {
+                let maxPosition = serieWrapper.scrollWidth - swiperContainer.offsetWidth;
+                currentPositionSerie = Math.min(currentPositionSerie + slideWidth, maxPosition);
+                updateSwiperPositionSerie();
+            });
+            function updateSwiperPositionSerie() {
+                serieWrapper.style.transform = `translateX(-${currentPositionSerie}px)`;
+            }
+
         },
 
 
