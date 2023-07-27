@@ -8,6 +8,8 @@ const nextButton = document.querySelector('.swiper-button-next');
 const slideWidth = 220; // Larghezza della slide, considerando margini
 
 let currentPosition = 0;
+let currentPositionFilm = 0;
+let currentPositionSerie = 0;
 
 
 prevButton.addEventListener('click', () => {
@@ -46,39 +48,78 @@ window.onload = () => {
             this.changeSection("search-results");
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
             wrapper.innerHTML = "";
+            const header = document.querySelector("#search-results .heading");
+
+            const prevHeadingTitle = header.querySelector(".heading-title");
+            if (prevHeadingTitle) {
+                prevHeadingTitle.remove();
+            }
+
+            const h2Element = document.createElement("h2");
+            h2Element.classList.add("heading-title");
+            h2Element.textContent = `Risultati della ricerca`;
+            header.appendChild(h2Element);
+
+            const filmResults = [];
+            const serieResults = [];
+
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-local', { title, url })
                 console.log(response);
 
+                if (response.data.message === 'Titolo non trovato nel database') {
+                    // Nessun risultato trovato nel database locale
+                    this.mostraMessaggioNessunRisultato(title);
+                    return;
+                }
                 for (const movie of response.data.data) {
                     if (movie.Poster === "N/A") {
                         continue;
                     }
-                    const swiperSlide = document.createElement("div");
-                    swiperSlide.classList.add("swiper-slide");
-
-                    const filmImg = document.createElement("img");
-                    filmImg.setAttribute("src", movie.poster);
-
-                    filmImg.addEventListener("click", () => {
-                        this.getMovieInfo(movie);
-                    });
-
-                    swiperSlide.appendChild(filmImg);
-                    wrapper.appendChild(swiperSlide);
+                    if (movie.Type === "movie") {
+                        filmResults.push(movie); // Aggiungo il film all'array dei film
+                    } else if (movie.Type === "series") {
+                        serieResults.push(movie); // Aggiungo la serie TV all'array delle serie TV
+                    }
                 }
+                if(filmResults.length > 0)
+                    this.generateFilmSlides(filmResults);
+                if(serieResults.length > 0)
+                    this.generateSerieSlides(serieResults);
+
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
             }
         },
 
+        mostraMessaggioNessunRisultato: function (title) {
+            this.changeSection("no-results")
+
+            const noResultsDiv = document.querySelector("#no-results-message");
+            noResultsDiv.classList.remove("hidden");
+
+            // Aggiungi l'evento di click al pulsante "Cerca approfonditamente"
+            const searchAgainButton = document.querySelector("#search-again-button");
+            searchAgainButton.addEventListener("click", () => {
+                // Quando viene cliccato il pulsante "Cerca approfonditamente", esegui normalmente la funzione searchMovie
+                this.searchMovie(title);
+
+                // Nascondi il div del messaggio e del pulsante
+                noResultsDiv.classList.add("hidden");
+            });
+
+
+
+        },
+
 
         searchMovie: async function (title) {
             this.changeSection("search-results");
-            const wrapper = document.querySelector("#search-results .swiper-wrapper");
-            wrapper.innerHTML = "";
-
+            const wrappers = document.querySelectorAll("#search-results .swiper-wrapper");
+            wrappers.forEach((elem) =>{
+                elem.innerHTML="";
+            });
 
             const header = document.querySelector("#search-results .heading");
 
@@ -102,17 +143,19 @@ window.onload = () => {
                 const totalResults = response.data.data.length;
                 h2Element.textContent = `Risultati della ricerca: ${totalResults} `;
                 for (const movie of response.data.data) {
+                    if (movie.Poster === "N/A") {
+                        continue;
+                    }
                     if (movie.Type === "movie") {
                         filmResults.push(movie); // Aggiungo il film all'array dei film
                     } else if (movie.Type === "series") {
                         serieResults.push(movie); // Aggiungo la serie TV all'array delle serie TV
                     }
                 }
-                // Chiamata alla funzione per generare le slide dei film
-                this.generateFilmSlides(filmResults);
-
-                // Chiamata alla funzione per generare le slide delle serie TV
-                this.generateSerieSlides(serieResults);
+                if(filmResults.length > 0)
+                    this.generateFilmSlides(filmResults);
+                if(serieResults.length > 0)
+                    this.generateSerieSlides(serieResults);
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
             }
@@ -158,13 +201,12 @@ window.onload = () => {
             swiperWrapperFilm.appendChild(prev);
             swiperWrapperFilm.appendChild(next);
 
-            let currentPositionFilm = 0;
 
             prev.addEventListener('click', () => {
                 currentPositionFilm = Math.max(currentPositionFilm - slideWidth, 0);
                 updateSwiperPositionFilm();
             });
-            
+
             next.addEventListener('click', () => {
                 let maxPosition = filmWrapper.scrollWidth - swiperContainer.offsetWidth;
                 currentPositionFilm = Math.min(currentPositionFilm + slideWidth, maxPosition);
@@ -174,6 +216,7 @@ window.onload = () => {
                 filmWrapper.style.transform = `translateX(-${currentPositionFilm}px)`;
             }
             
+
 
         },
 
@@ -211,13 +254,12 @@ window.onload = () => {
                 swiperSlide.appendChild(serieTitle);
                 serieWrapper.appendChild(swiperSlide);
             }
-            
+
             const swiperWrapperSerie = document.querySelector('#search-results #serie-swiper');
 
             swiperWrapperSerie.appendChild(prev);
             swiperWrapperSerie.appendChild(next);
 
-            let currentPositionSerie = 0;
 
             prev.addEventListener('click', () => {
                 currentPositionSerie = Math.max(currentPositionSerie - slideWidth, 0);
@@ -236,42 +278,7 @@ window.onload = () => {
         },
 
 
-        // testPromiseLastMovies: function () {
-        //     return new Promise((resolve, reject) => {
-        //         axios.get(this.getHost() + "s=super mario&type=movie")
-        //             .then((risposta) => {
 
-        //                 resolve(risposta.data);
-        //             })
-        //             .catch((err) => {
-        //                 reject(err);
-        //             })
-        //     });
-        // },
-
-        // getLastMovies: async function () {
-        //     const risposta = await this.testPromiseLastMovies();
-
-        //     const containerDom = document.querySelector("#search-results>.movies-content");
-        //     containerDom.innerHTML = "";
-
-        //     for (const movie of risposta.Search) {
-        //         console.log(movie)
-        //         const domString = `<div class="swiper-slide">
-        //       <div class="movie-box">
-        //             <img class="movie-box-img" src="${movie.Poster}">
-        //             <div class="box-text">
-        //                 <h2 class="movie-title">${movie.Title}</h2>
-        //                 <span class="movie-type">${movie.Year}</span>
-        //                 <a href="#" class="watch-btn play-btn">
-        //                     <i class="bx bx-right-arrow"></i>
-        //                 </a>
-        //             </div>
-        //         </div>
-        //     </div>`;
-        //         containerDom.innerHTML += domString;
-        //     }
-        // },
 
         getMovieInfo: async function (movie) {
             this.changeSection("loader");
@@ -321,7 +328,7 @@ window.onload = () => {
     searchButtons.forEach(button => {
         button.addEventListener("keydown", async (event) => {
             if (!event.isComposing && event.key === "Enter") {
-                Ricerca.searchMovie(event.target.value);
+                Ricerca.searchMovieLocal(event.target.value);
             }
         })
     });

@@ -105,7 +105,7 @@ app.post("/login", (req, res) => {
     }
     else {
       res.sendStatus(200);
-      return; s
+      return; 
     }
   })
 })
@@ -114,7 +114,7 @@ app.post('/api/request-local', async (req, res) => {
   try {
     const { title, url } = req.body;
     console.log('Titolo:', title);
-
+    console.log("sto chiedendo al db!")
     connection.query(
       'SELECT * FROM media WHERE title LIKE ?',
       [`%${title}%`],
@@ -124,10 +124,8 @@ app.post('/api/request-local', async (req, res) => {
           res.status(500).json({ error: 'Errore nella verifica dei dati nel database' });
         } else {
           if (results.length > 0) {
-            // I dati sono stati trovati nel database, invia la risposta al client
             res.json({ message: 'Richiesta al db eseguita', data: results });
           } else {
-            // Il titolo non è stato trovato nel database, invia un messaggio al client
             res.json({ message: 'Titolo non trovato nel database', data: null });
           }
         }
@@ -175,7 +173,7 @@ app.post('/api/request-to-server', async (req, res) => {
     const { title, url } = req.body;
     console.log('Titolo:', title);
     console.log('URL:', url);
-
+    console.log("oh no sto chiedendo al server!")
     const rispostaEsterna = await richiestaEsterna(url + "type=movie&");
     const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
     const rispostaEsterna3 = await richiestaEsterna(url + "type=series&");
@@ -204,7 +202,7 @@ app.post('/api/request-to-server', async (req, res) => {
       }
 
       var sql = "INSERT INTO media SET ?";
-      connection.query(sql, { imdbID: movie.imdbID, title: movie.Title, year: movie.Year, type: movie.Type, plot: movie.Plot, poster: movie.Poster }, (err, results) => {
+      connection.query(sql, { imdbID: movie.imdbID, Title: movie.Title, Year: movie.Year, Type: movie.Type, Plot: movie.Plot, Poster: movie.Poster }, (err, results) => {
         if (err) {
           console.error('Errore nell\'inserimento dei dati nel database:', err);
           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
