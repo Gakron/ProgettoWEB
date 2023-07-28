@@ -110,6 +110,65 @@ app.post("/login", (req, res) => {
   })
 })
 
+
+app.get('/api/populars/film', (req, res) => {
+  try {
+    connection.query(
+      'SELECT * FROM media WHERE Year = 2023 AND Type = "movie"',
+      (err, results) => {
+        if (err) {
+          console.error('Errore nella verifica dei dati nel database:', err);
+          res.status(500).json({ error: 'Errore nella verifica dei dati nel database' });
+        } else {
+          res.json({ message: 'Query eseguita con successo!', data: results });
+        }
+      }
+    );
+  } catch (error) {
+    console.error('Errore nella richiesta al server:', error);
+    res.status(500).json({ error: 'Errore nella richiesta al server' });
+  }
+});
+
+app.get('/api/populars/series', (req, res) => {
+  try {
+    connection.query(
+      'SELECT * FROM media WHERE Year = 2023 AND Type = "series"',
+      (err, results) => {
+        if (err) {
+          console.error('Errore nella verifica dei dati nel database:', err);
+          res.status(500).json({ error: 'Errore nella verifica dei dati nel database' });
+        } else {
+          res.json({ message: 'Query eseguita con successo!', data: results });
+        }
+      }
+    );
+  } catch (error) {
+    console.error('Errore nella richiesta al server:', error);
+    res.status(500).json({ error: 'Errore nella richiesta al server' });
+  }
+});
+
+app.post('/api/real-time-search', async (req, res) => {
+  console.log("ei, ciao sono nuvoo")
+  try {
+    const { title } = req.body;
+    const sql = 'SELECT * FROM media WHERE title LIKE ?';
+    connection.query(sql, [`%${title}%`], (err, data) => {
+      if (err) {
+        console.error('Errore nella verifica dei dati nel database:', err);
+        res.status(500).json({ error: 'Errore nella verifica dei dati nel database' });
+      } else {
+        res.json({ message: 'Richiesta al db eseguita', data });
+      }
+    });
+  } catch (error) {
+    console.error('Errore nella richiesta al db:', error);
+    res.status(500).json({ error: 'Errore nella richiesta al db' });
+  }
+});
+
+
 app.post('/api/request-local', async (req, res) => {
   try {
     const { title, url } = req.body;
