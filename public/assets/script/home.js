@@ -47,6 +47,8 @@ window.onload = () => {
         getPopulars: async function () {
             const wrapper = document.querySelector('#popular #film');
             wrapper.innerHTML = '';
+            const wrapper2 = document.querySelector('#popular #serie');
+            wrapper2.innerHTML = '';
 
             try {
                 const response = await axios.get('http://localhost:3000/api/populars/film');
@@ -79,6 +81,9 @@ window.onload = () => {
             this.changeSection("search-results");
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
             wrapper.innerHTML = "";
+
+        
+
             const header = document.querySelector("#search-results .heading");
 
             const prevHeadingTitle = header.querySelector(".heading-title");
@@ -100,6 +105,7 @@ window.onload = () => {
                     this.mostraMessaggioNessunRisultato(title);
                     return;
                 }
+                
                 for (const movie of response.data.data) {
 
                     const filmResults = response.data.data.filter(movie => movie.Type === "movie" && movie.Poster !== "N/A");
@@ -301,7 +307,7 @@ window.onload = () => {
         generateFilmSlidesPopulars: function (filmResults) {
             const filmWrapper = document.querySelector("#popular #film");
             filmWrapper.innerHTML = "";
-            const swiperTitle = document.querySelector("#popular #swiper-title-film");
+            const swiperTitle = document.querySelector("#popular #swiper-title-film-pop");
             swiperTitle.textContent = "Popular Films";
 
             const prev = document.createElement("button");
@@ -360,7 +366,7 @@ window.onload = () => {
         generateSeriesSlidesPopulars: function (serieResults) {
             const serieWrapper = document.querySelector("#popular #serie");
             serieWrapper.innerHTML = "";
-            const swiperTitle = document.querySelector("#popular #swiper-title-serie");
+            const swiperTitle = document.querySelector("#popular #swiper-title-serie-pop");
             swiperTitle.textContent = "Popular Series";
 
             const prev = document.createElement("button");
