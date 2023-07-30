@@ -105,7 +105,7 @@ app.post("/login", (req, res) => {
     }
     else {
       res.sendStatus(200);
-      return; 
+      return;
     }
   })
 })
@@ -199,6 +199,7 @@ app.post('/api/request-local', async (req, res) => {
 async function richiestaEsterna(url) {
   try {
     const response = await axios.get(url);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -232,16 +233,16 @@ app.post('/api/request-to-server', async (req, res) => {
     console.log('Titolo:', title);
     console.log('URL:', url);
     console.log("oh no sto chiedendo al server!")
-    const rispostaEsterna = await richiestaEsterna(url + "plot=full&type=movie&");
-    const rispostaEsterna2 = await richiestaEsterna(url + "plot=full&type=movie&page=2&");
-    const rispostaEsterna3 = await richiestaEsterna(url + "plot=full&type=series&");
-    const rispostaEsterna4 = await richiestaEsterna(url + "plot=full&type=series&page=2&");
+    const rispostaEsterna = await richiestaEsterna(url + "type=movie&");
+    const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
+    const rispostaEsterna3 = await richiestaEsterna(url + "type=series&");
+    const rispostaEsterna4 = await richiestaEsterna(url + "type=series&page=2&");
 
     const concatenatedArray = [
-      ...(rispostaEsterna?.Search??[]),
-      ...(rispostaEsterna2?.Search??[]),
-      ...(rispostaEsterna3?.Search??[]),
-      ...(rispostaEsterna4?.Search??[]) 
+      ...(rispostaEsterna?.Search ?? []),
+      ...(rispostaEsterna2?.Search ?? []),
+      ...(rispostaEsterna3?.Search ?? []),
+      ...(rispostaEsterna4?.Search ?? [])
     ];
     console.log(concatenatedArray)
     //METODO CHE USAVO PRIMA
@@ -250,7 +251,7 @@ app.post('/api/request-to-server', async (req, res) => {
     //   return result.concat(searchArray);
     // }, []);
 
-    if(concatenatedArray.length<=0){
+    if (concatenatedArray.length <= 0) {
       res.json({ message: 'Titolo non trovato online', data: null });
       return
     }
@@ -278,6 +279,39 @@ app.post('/api/request-to-server', async (req, res) => {
   } catch (error) {
     console.error('Errore nella richiesta al server:', error);
     res.status(500).json({ error: 'Errore nella richiesta al server' });
+  }
+
+});
+
+
+app.post('/api/request-plot', async (req, res) => {
+  try {
+    console.log("sono entrato nella richiesta del plot")
+    const { id, url } = req.body;
+    console.log(id);
+    const response = await axios.get(url + "i=" + id + "&plot=full&");
+    const body = {
+      Genre: response.data.Genre,
+      Runtime: response.data.Runtime,
+      Plot: response.data.Plot,
+      Released: response.data.Released
+    }
+
+    var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
+    const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
+    connection.query(sql, data, (err, results) => {
+      if (err) {
+        console.error('Errore nell\'aggiornamento dei dati nel database:', err);
+        res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
+        return;
+      } else {
+        console.log("aggiornato");
+      }
+      res.json(body);
+    })
+  } catch (error) {
+    console.error('Errore nella richiesta del plot:', error);
+    res.status(500).json({ error: 'Errore nella richiesta del plot' });
   }
 
 });

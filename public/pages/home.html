@@ -95,7 +95,7 @@
 
 
   <section class="movie-info-container container hidden" id="movie-info">
-    
+
     <div class="heading">
       <div class="search-box">
         <input type="search" name="" class="search-input" placeholder="Cerca un film">
@@ -104,19 +104,27 @@
       </div>
     </div>
 
-
-    <img src="" class="movie-info-img">
-    <div class="movie-info-text">
-      <h2></h2>
-      <div class="rating">
-
+    <div class="container-info">
+      <img src="" class="movie-info-img">
+      <div class="movie-info-text">
+        <h2></h2>
+        <div class="trama"></div>
+        <div class="generi"></div>
+        <div class="anno"></div>
+        <div class="visto-button-container">
+          <div class="visto-text">Visto</div>
+          <button class="visto-button">Segna come visto</button>
+        </div>
       </div>
-      <div class="tags">
-
-      </div>
-
     </div>
-  </section>
+</section>
+
+
+
+
+
+
+
 
 
 
@@ -128,7 +136,7 @@
         <div class="suggestions"></div>
       </div>
     </div>
-    
+
     <div id="no-results-message" class="hidden">
       <h2></h2>
       <button id="search-again-button">Cerca approfonditamente</button>
@@ -145,11 +153,12 @@
         <div class="suggestions"></div>
       </div>
     </div>
-    <div class="movies-content" >
-        <div>Coso che gira per farmi capire che qualcosa sta caricando</div>
+
+    <div class="caricamento">
+      <div>Coso che gira per farmi capire che qualcosa sta caricando</div>
     </div>
 
-</section>
+  </section>
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/public/assets/script/home.js"></script>

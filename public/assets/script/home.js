@@ -78,7 +78,7 @@ window.onload = () => {
 
 
         searchMovieLocal: async function (title) {
-            this.changeSection("search-results");
+            this.changeSection("loader");
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
             wrapper.innerHTML = "";
 
@@ -106,15 +106,28 @@ window.onload = () => {
                     return;
                 }
 
-                for (const movie of response.data.data) {
+                const filmResults = [];
+                const serieResults = [];
 
-                    const filmResults = response.data.data.filter(movie => movie.Type === "movie" && movie.Poster !== "N/A");
-                    const serieResults = response.data.data.filter(movie => movie.Type === "series" && movie.Poster !== "N/A");
-                    if (filmResults.length > 0)
-                        this.generateFilmSlides(filmResults);
-                    if (serieResults.length > 0)
-                        this.generateSerieSlides(serieResults);
+                for (const movie of response.data.data) {
+                    if (movie.Poster === "N/A") {
+                        continue;
+                    }
+                    if (movie.Type === "movie") {
+                        filmResults.push(movie); // Aggiungo il film all'array dei film
+                    } else if (movie.Type === "series") {
+                        serieResults.push(movie); // Aggiungo la serie TV all'array delle serie TV
+                    }
+
                 }
+
+                if (filmResults.length > 0)
+                    this.generateFilmSlides(filmResults);
+                if (serieResults.length > 0)
+                    this.generateSerieSlides(serieResults);
+
+                this.changeSection("search-results");
+
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
             }
@@ -126,43 +139,43 @@ window.onload = () => {
             const noResultsDiv = document.querySelector("#no-results-message");
             noResultsDiv.classList.remove("hidden");
 
-            const messaggio=document.querySelector("#no-results h2");
-            messaggio.innerHTML="Non ho trovato nulla al momento"
-            
+            const messaggio = document.querySelector("#no-results h2");
+            messaggio.innerHTML = "Non ho trovato nulla al momento"
+
             // Aggiungi l'evento di click al pulsante "Cerca approfonditamente"
             const searchAgainButton = document.querySelector("#search-again-button");
             searchAgainButton.classList.remove("hidden");
             searchAgainButton.addEventListener("click", () => {
                 // Quando viene cliccato il pulsante "Cerca approfonditamente", esegui normalmente la funzione searchMovie
                 this.searchMovie(title);
-                
+
                 // Nascondi il div del messaggio e del pulsante
                 noResultsDiv.classList.add("hidden");
 
             });
         },
 
-        mostraMessaggioNessunRisultatoOnline: function(title){
+        mostraMessaggioNessunRisultatoOnline: function (title) {
             this.changeSection("no-results")
             const noResultsDiv = document.querySelector("#no-results-message");
             noResultsDiv.classList.remove("hidden");
 
-            const messaggio=document.querySelector("#no-results h2");
-            messaggio.innerHTML="Titolo non disponibile"
+            const messaggio = document.querySelector("#no-results h2");
+            messaggio.innerHTML = "Titolo non disponibile"
 
             const searchAgainButton = document.querySelector("#search-again-button");
             searchAgainButton.classList.add("hidden");
 
-        
+
         },
 
 
         searchMovie: async function (title) {
-            this.changeSection("search-results");
-            const wrappers = document.querySelectorAll("#search-results .swiper-swiper");
-            wrappers.forEach((elem) => {
-                elem.innerHTML = "";
-            });
+            this.changeSection("loader");
+            const wrapperfilm = document.querySelector("#search-results #film");
+            wrapperfilm.innerHTML = "";
+            const wrapperserie = document.querySelector("#search-results #serie");
+            wrapperserie.innerHTML = "";
 
             const header = document.querySelector("#search-results .heading");
 
@@ -178,7 +191,7 @@ window.onload = () => {
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
-                
+
                 if (response.data.message === 'Titolo non trovato online') {
                     // Nessun risultato trovato nel database locale
                     this.mostraMessaggioNessunRisultatoOnline(title);
@@ -198,13 +211,17 @@ window.onload = () => {
                     this.generateFilmSlides(filmResults);
                 if (serieResults.length > 0)
                     this.generateSerieSlides(serieResults);
+
+
+                this.changeSection("search-results");
             } catch (error) {
                 console.error('Errore nella richiesta al server:', error);
             }
         },
 
         // Funzione per generare le slide dei film
-        generateFilmSlides: function (filmResults) {
+        generateFilmSlides: async function (filmResults) {
+
             const filmWrapper = document.querySelector("#search-results #film");
             filmWrapper.innerHTML = "";
             const swiperTitle = document.querySelector("#search-results #swiper-title-film");
@@ -249,6 +266,7 @@ window.onload = () => {
             swiperWrapperFilm.appendChild(next);
 
 
+
             prev.addEventListener('click', () => {
                 currentPositionFilm = Math.max(currentPositionFilm - slideWidth, 0);
                 updateSwiperPositionFilm();
@@ -268,7 +286,8 @@ window.onload = () => {
         },
 
         // Funzione per generare le slide delle serie TV
-        generateSerieSlides: function (serieResults) {
+        generateSerieSlides: async function (serieResults) {
+
             const serieWrapper = document.querySelector("#search-results #serie");
             serieWrapper.innerHTML = "";
             const swiperTitle = document.querySelector("#search-results #swiper-title-serie");
@@ -308,6 +327,7 @@ window.onload = () => {
 
             swiperWrapperSerie.appendChild(prev);
             swiperWrapperSerie.appendChild(next);
+
 
             currentPositionSerie = 0;
 
@@ -388,6 +408,7 @@ window.onload = () => {
 
         // Funzione per generare le slide delle serie TV
         generateSeriesSlidesPopulars: function (serieResults) {
+
             const serieWrapper = document.querySelector("#popular #serie");
             serieWrapper.innerHTML = "";
             const swiperTitle = document.querySelector("#popular #swiper-title-serie-pop");
@@ -444,19 +465,29 @@ window.onload = () => {
         },
 
         getMovieInfo: async function (movie) {
+            this.changeSection("loader");
+            const url = this.getHost();
+            const id = movie.imdbID;
+
+
+            const response = await axios.post('http://localhost:3000/api/request-plot', { id, url })
+            console.log(response);
+
             const titleDom = document.querySelector("#movie-info .movie-info-text h2");
             titleDom.innerHTML = movie.Title;
 
             const imageDom = document.querySelector("#movie-info .movie-info-img");
             imageDom.setAttribute("src", movie.Poster);
 
-            const tagsDom = document.querySelector("#movie-info .movie-info-text .tags");
-            tagsDom.innerHTML = "";
-            console.log(movie)
-            // const generi = movie.Genre.split(", ");
-            // for (const genere of generi) {
-            //     tagsDom.innerHTML += "<span>" + genere + "</span>";
-            // }
+            const plotDom = document.querySelector("#movie-info .trama");
+            plotDom.innerHTML = response.data.Plot;
+
+            const yearDom = document.querySelector("#movie-info .anno");
+            yearDom.innerHTML = "Release date: " + response.data.Released;
+
+            const genreDom = document.querySelector("#movie-info .generi");
+            console.log(movie.Genre);
+            genreDom.innerHTML="Genre: "+ response.data.Genre
 
             this.changeSection("movie-info");
 
