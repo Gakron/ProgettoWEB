@@ -131,6 +131,7 @@ window.onload = () => {
             
             // Aggiungi l'evento di click al pulsante "Cerca approfonditamente"
             const searchAgainButton = document.querySelector("#search-again-button");
+            searchAgainButton.classList.remove("hidden");
             searchAgainButton.addEventListener("click", () => {
                 // Quando viene cliccato il pulsante "Cerca approfonditamente", esegui normalmente la funzione searchMovie
                 this.searchMovie(title);
@@ -150,7 +151,7 @@ window.onload = () => {
             messaggio.innerHTML="Titolo non disponibile"
 
             const searchAgainButton = document.querySelector("#search-again-button");
-            searchAgainButton.innerHTML="";
+            searchAgainButton.classList.add("hidden");
 
         
         },
