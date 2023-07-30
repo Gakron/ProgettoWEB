@@ -120,7 +120,7 @@
 
 
 
-  <section id="no-results">
+  <section id="no-results" class="hidden">
     <div class="heading">
       <div class="search-box">
         <input type="search" name="" class="search-input" placeholder="Cerca un film">
@@ -134,6 +134,22 @@
       <button id="search-again-button">Cerca approfonditamente</button>
     </div>
   </section>
+
+
+  <section class="container hidden" id="loader">
+
+    <div class="heading">
+      <div class="search-box">
+        <input type="search" name="" class="search-input" placeholder="Cerca un film">
+        <img class='bx bx-search' src="/public/assets/images/search-white.svg">
+        <div class="suggestions"></div>
+      </div>
+    </div>
+    <div class="movies-content" >
+        <div>Coso che gira per farmi capire che qualcosa sta caricando</div>
+    </div>
+
+</section>
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/public/assets/script/home.js"></script>

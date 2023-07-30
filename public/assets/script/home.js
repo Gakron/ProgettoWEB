@@ -135,10 +135,10 @@ window.onload = () => {
             searchAgainButton.addEventListener("click", () => {
                 // Quando viene cliccato il pulsante "Cerca approfonditamente", esegui normalmente la funzione searchMovie
                 this.searchMovie(title);
-
+                
                 // Nascondi il div del messaggio e del pulsante
                 noResultsDiv.classList.add("hidden");
-                
+
             });
         },
 
@@ -159,7 +159,7 @@ window.onload = () => {
 
         searchMovie: async function (title) {
             this.changeSection("search-results");
-            const wrappers = document.querySelectorAll("#search-results .swiper-wrapper");
+            const wrappers = document.querySelectorAll("#search-results .swiper-swiper");
             wrappers.forEach((elem) => {
                 elem.innerHTML = "";
             });
