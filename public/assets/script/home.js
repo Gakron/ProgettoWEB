@@ -82,7 +82,7 @@ window.onload = () => {
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
             wrapper.innerHTML = "";
 
-        
+
 
             const header = document.querySelector("#search-results .heading");
 
@@ -105,7 +105,7 @@ window.onload = () => {
                     this.mostraMessaggioNessunRisultato(title);
                     return;
                 }
-                
+
                 for (const movie of response.data.data) {
 
                     const filmResults = response.data.data.filter(movie => movie.Type === "movie" && movie.Poster !== "N/A");
@@ -126,6 +126,9 @@ window.onload = () => {
             const noResultsDiv = document.querySelector("#no-results-message");
             noResultsDiv.classList.remove("hidden");
 
+            const messaggio=document.querySelector("#no-results h2");
+            messaggio.innerHTML="Non ho trovato nulla al momento"
+            
             // Aggiungi l'evento di click al pulsante "Cerca approfonditamente"
             const searchAgainButton = document.querySelector("#search-again-button");
             searchAgainButton.addEventListener("click", () => {
@@ -134,10 +137,22 @@ window.onload = () => {
 
                 // Nascondi il div del messaggio e del pulsante
                 noResultsDiv.classList.add("hidden");
+                
             });
+        },
 
+        mostraMessaggioNessunRisultatoOnline: function(title){
+            this.changeSection("no-results")
+            const noResultsDiv = document.querySelector("#no-results-message");
+            noResultsDiv.classList.remove("hidden");
 
+            const messaggio=document.querySelector("#no-results h2");
+            messaggio.innerHTML="Titolo non disponibile"
 
+            const searchAgainButton = document.querySelector("#search-again-button");
+            searchAgainButton.innerHTML="";
+
+        
         },
 
 
@@ -159,12 +174,15 @@ window.onload = () => {
 
             const filmResults = [];
             const serieResults = [];
-
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
-
-
+                
+                if (response.data.message === 'Titolo non trovato online') {
+                    // Nessun risultato trovato nel database locale
+                    this.mostraMessaggioNessunRisultatoOnline(title);
+                    return;
+                }
                 for (const movie of response.data.data) {
                     if (movie.Poster === "N/A") {
                         continue;
@@ -208,6 +226,8 @@ window.onload = () => {
                 const filmImg = document.createElement("img");
                 filmImg.setAttribute("src", movie.Poster);
 
+
+
                 const filmTitle = document.createElement("h3");
                 filmTitle.textContent = movie.Title;
 
@@ -221,6 +241,8 @@ window.onload = () => {
             }
 
             const swiperWrapperFilm = document.querySelector('#search-results #film-swiper');
+
+            currentPositionFilm = 0;
 
             swiperWrapperFilm.appendChild(prev);
             swiperWrapperFilm.appendChild(next);
@@ -286,6 +308,7 @@ window.onload = () => {
             swiperWrapperSerie.appendChild(prev);
             swiperWrapperSerie.appendChild(next);
 
+            currentPositionSerie = 0;
 
             prev.addEventListener('click', () => {
                 currentPositionSerie = Math.max(currentPositionSerie - slideWidth, 0);
@@ -419,7 +442,25 @@ window.onload = () => {
 
         },
 
+        getMovieInfo: async function (movie) {
+            const titleDom = document.querySelector("#movie-info .movie-info-text h2");
+            titleDom.innerHTML = movie.Title;
 
+            const imageDom = document.querySelector("#movie-info .movie-info-img");
+            imageDom.setAttribute("src", movie.Poster);
+
+            const tagsDom = document.querySelector("#movie-info .movie-info-text .tags");
+            tagsDom.innerHTML = "";
+            console.log(movie)
+            // const generi = movie.Genre.split(", ");
+            // for (const genere of generi) {
+            //     tagsDom.innerHTML += "<span>" + genere + "</span>";
+            // }
+
+            this.changeSection("movie-info");
+
+
+        },
 
 
 
@@ -500,7 +541,7 @@ window.onload = () => {
                     });
                     Ricerca.searchMovieLocal(suggestion.Title);
                 });
-                
+
 
                 suggestionsDiv.appendChild(suggestionElement);
             }
@@ -525,11 +566,11 @@ window.onload = () => {
                 Ricerca.searchMovieLocal(event.target.value);
             }
 
-            suggestionsDivs.forEach(div =>{
+            suggestionsDivs.forEach(div => {
                 hideSuggestions(div);
             })
 
-            
+
         })
     });
 

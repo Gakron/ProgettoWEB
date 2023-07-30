@@ -150,7 +150,6 @@ app.get('/api/populars/series', (req, res) => {
 });
 
 app.post('/api/real-time-search', async (req, res) => {
-  console.log("ei, ciao sono nuvoo")
   try {
     const { title } = req.body;
     const sql = 'SELECT * FROM media WHERE title LIKE ?';
@@ -233,10 +232,10 @@ app.post('/api/request-to-server', async (req, res) => {
     console.log('Titolo:', title);
     console.log('URL:', url);
     console.log("oh no sto chiedendo al server!")
-    const rispostaEsterna = await richiestaEsterna(url + "type=movie&");
-    const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
-    const rispostaEsterna3 = await richiestaEsterna(url + "type=series&");
-    const rispostaEsterna4 = await richiestaEsterna(url + "type=series&page=2&");
+    const rispostaEsterna = await richiestaEsterna(url + "plot=full&type=movie&");
+    const rispostaEsterna2 = await richiestaEsterna(url + "plot=full&type=movie&page=2&");
+    const rispostaEsterna3 = await richiestaEsterna(url + "plot=full&type=series&");
+    const rispostaEsterna4 = await richiestaEsterna(url + "plot=full&type=series&page=2&");
 
     const concatenatedArray = [
       ...(rispostaEsterna?.Search??[]),
@@ -244,15 +243,17 @@ app.post('/api/request-to-server', async (req, res) => {
       ...(rispostaEsterna3?.Search??[]),
       ...(rispostaEsterna4?.Search??[]) 
     ];
-
+    console.log(concatenatedArray)
     //METODO CHE USAVO PRIMA
     // const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
     //   const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
     //   return result.concat(searchArray);
     // }, []);
 
-
-    console.log('Risposta dal server esterno ricevuta');
+    if(concatenatedArray.length<=0){
+      res.json({ message: 'Titolo non trovato online', data: null });
+      return
+    }
 
     for (const movie of concatenatedArray) {
       const imdbIDExists = await controllaID(movie.imdbID);
@@ -272,7 +273,7 @@ app.post('/api/request-to-server', async (req, res) => {
       })
     }
 
-    //ORA CHE LI HO SALVATI POSSO FARE LA RICERCA! FINALLY
+    //ORA CHE LI HO SALVATI POSSO FARE LA RICERCA LOCALE! FINALLY
     res.json({ message: 'Richiesta al server eseguita con successo!', data: concatenatedArray });
   } catch (error) {
     console.error('Errore nella richiesta al server:', error);
