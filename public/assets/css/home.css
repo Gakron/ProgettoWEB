@@ -102,7 +102,7 @@ header {
     align-items: center;
     justify-content: space-between;
     padding: 8px 14px;
-    margin-bottom: 2rem;
+    margin-bottom: 120px;
     position: relative;
 }
 
@@ -113,9 +113,21 @@ header {
 }
 
 
+.cerca-meglio {
+    position: absolute;
+    text-align: center;
+    top:100px;
+    right: 10px;
+    cursor: pointer;
+    background-color: transparent;
+    border-color: transparent;
+    text-decoration: underline;
+}
+
 
 .swiper-container {
     display: flex;
+    margin-top: 10px;
     margin-bottom: 20px;
     overflow: hidden;
     max-width: 100%;
@@ -317,6 +329,7 @@ header {
 
 .movie-info-img {
     margin-right: 20px;
+   
 }
 
 .movie-info-text {
@@ -357,12 +370,11 @@ header {
 
 .movie-info-text .visto-button-container {
     display: flex;
-    align-items: flex-end; 
-    justify-content: flex-end;/* Aggiunto per allineare il .visto-button nell'angolo in basso a destra */
+    align-items: flex-end;
+    justify-content: flex-end;
+    /* Aggiunto per allineare il .visto-button nell'angolo in basso a destra */
 }
 
 .movie-info-text .visto-text {
     margin-right: 10px;
 }
-
-

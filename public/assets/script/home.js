@@ -10,7 +10,6 @@ const slideWidth = 225; // Larghezza della slide, considerando margini
 let currentPositionFilm = 0;
 let currentPositionSerie = 0;
 
-
 // BOTTONI CHE FUNZIONAVANO MA ERANO STATICI
 // let currentPosition = 0;
 // prevButton.addEventListener('click', () => {
@@ -79,11 +78,9 @@ window.onload = () => {
 
         searchMovieLocal: async function (title) {
             this.changeSection("loader");
+
             const wrapper = document.querySelector("#search-results .swiper-wrapper");
             wrapper.innerHTML = "";
-
-
-
             const header = document.querySelector("#search-results .heading");
 
             const prevHeadingTitle = header.querySelector(".heading-title");
@@ -172,6 +169,7 @@ window.onload = () => {
 
         searchMovie: async function (title) {
             this.changeSection("loader");
+
             const wrapperfilm = document.querySelector("#search-results #film");
             wrapperfilm.innerHTML = "";
             const wrapperserie = document.querySelector("#search-results #serie");
@@ -487,7 +485,7 @@ window.onload = () => {
 
             const genreDom = document.querySelector("#movie-info .generi");
             console.log(movie.Genre);
-            genreDom.innerHTML="Genre: "+ response.data.Genre
+            genreDom.innerHTML = "Genre: " + response.data.Genre
 
             this.changeSection("movie-info");
 
