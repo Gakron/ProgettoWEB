@@ -662,9 +662,16 @@ window.onload = () => {
     });
 
 
+    const profile= document.querySelector(".profile");
+    profile.addEventListener("click", ()=> {
+        window.location.assign("/public/pages/profile.html")
+    })
+    const profile_txt=document.querySelector(".profile-box span");
+    profile_txt.addEventListener("click", ()=> {
+        window.location.assign("/public/pages/profile.html")
+    })
+
     
-
-
     const logo = document.querySelector(".logo img")
     logo.addEventListener("click", () => {
         Ricerca.changeSection("popular")
