@@ -114,7 +114,7 @@ app.post("/login", (req, res) => {
 app.get('/api/populars/film', (req, res) => {
   try {
     connection.query(
-      'SELECT * FROM media WHERE Year = 2023 AND Type = "movie"',
+      'SELECT * FROM media WHERE Year = 2023 AND Type = "movie" AND Poster <> "N/A"',
       (err, results) => {
         if (err) {
           console.error('Errore nella verifica dei dati nel database:', err);
@@ -133,7 +133,7 @@ app.get('/api/populars/film', (req, res) => {
 app.get('/api/populars/series', (req, res) => {
   try {
     connection.query(
-      'SELECT * FROM media WHERE Year = 2023 AND Type = "series"',
+      'SELECT * FROM media WHERE Year = 2023 AND Type = "series" AND Poster <> "N/A"',
       (err, results) => {
         if (err) {
           console.error('Errore nella verifica dei dati nel database:', err);
@@ -243,6 +243,79 @@ app.post('/api/request-to-server', async (req, res) => {
       ...(rispostaEsterna2?.Search ?? []),
       ...(rispostaEsterna3?.Search ?? []),
       ...(rispostaEsterna4?.Search ?? [])
+    ];
+    console.log(concatenatedArray)
+    //METODO CHE USAVO PRIMA
+    // const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
+    //   const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
+    //   return result.concat(searchArray);
+    // }, []);
+
+    if (concatenatedArray.length <= 0) {
+      res.json({ message: 'Titolo non trovato online', data: null });
+      return
+    }
+
+    for (const movie of concatenatedArray) {
+      const imdbIDExists = await controllaID(movie.imdbID);
+      if (imdbIDExists) {
+        continue; // Salta l'iterazione e continua con il prossimo film
+      }
+
+      var sql = "INSERT INTO media SET ?";
+      connection.query(sql, { imdbID: movie.imdbID, Title: movie.Title, Year: movie.Year, Type: movie.Type, Plot: movie.Plot, Poster: movie.Poster }, (err, results) => {
+        if (err) {
+          console.error('Errore nell\'inserimento dei dati nel database:', err);
+          res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+          return;
+        } else {
+          console.log("inserito");
+        }
+      })
+    }
+
+    //ORA CHE LI HO SALVATI POSSO FARE LA RICERCA LOCALE! FINALLY
+    res.json({ message: 'Richiesta al server eseguita con successo!', data: concatenatedArray });
+  } catch (error) {
+    console.error('Errore nella richiesta al server:', error);
+    res.status(500).json({ error: 'Errore nella richiesta al server' });
+  }
+
+});
+
+
+app.post('/api/request-to-server-better', async (req, res) => {
+  try {
+    const { title, url } = req.body;
+    console.log('Titolo:', title);
+    console.log('URL:', url);
+    console.log("oh no sto chiedendo al server!")
+    const rispostaEsterna = await richiestaEsterna(url + "type=movie&page=1&");
+    const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
+    const rispostaEsterna3 = await richiestaEsterna(url + "type=movie&page=3&");
+    const rispostaEsterna4 = await richiestaEsterna(url + "type=movie&page=4&");
+    const rispostaEsterna5 = await richiestaEsterna(url + "type=movie&page=5&");
+
+
+    const rispostaEsterna6 = await richiestaEsterna(url + "type=series&page=1&");
+    const rispostaEsterna7 = await richiestaEsterna(url + "type=series&page=2&");
+    const rispostaEsterna8 = await richiestaEsterna(url + "type=series&page=3&");
+    const rispostaEsterna9 = await richiestaEsterna(url + "type=series&page=4&");
+    const rispostaEsterna10 = await richiestaEsterna(url + "type=series&page=5&");
+
+
+    const concatenatedArray = [
+      ...(rispostaEsterna?.Search ?? []),
+      ...(rispostaEsterna2?.Search ?? []),
+      ...(rispostaEsterna3?.Search ?? []),
+      ...(rispostaEsterna4?.Search ?? []),
+      ...(rispostaEsterna5?.Search ?? []),
+      ...(rispostaEsterna6?.Search ?? []),
+      ...(rispostaEsterna7?.Search ?? []),
+      ...(rispostaEsterna8?.Search ?? []),
+      ...(rispostaEsterna9?.Search ?? []),
+      ...(rispostaEsterna10?.Search ?? [])
+
     ];
     console.log(concatenatedArray)
     //METODO CHE USAVO PRIMA

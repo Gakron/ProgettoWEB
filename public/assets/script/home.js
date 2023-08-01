@@ -9,6 +9,7 @@ const slideWidth = 225; // Larghezza della slide, considerando margini
 
 let currentPositionFilm = 0;
 let currentPositionSerie = 0;
+let ultimaRicerca;
 
 // BOTTONI CHE FUNZIONAVANO MA ERANO STATICI
 // let currentPosition = 0;
@@ -27,7 +28,6 @@ let currentPositionSerie = 0;
 // function updateSwiperPosition() {
 //     swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
 // }
-
 
 
 
@@ -169,7 +169,6 @@ window.onload = () => {
 
         searchMovie: async function (title) {
             this.changeSection("loader");
-
             const wrapperfilm = document.querySelector("#search-results #film");
             wrapperfilm.innerHTML = "";
             const wrapperserie = document.querySelector("#search-results #serie");
@@ -189,6 +188,55 @@ window.onload = () => {
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-to-server', { title, url })
+
+                if (response.data.message === 'Titolo non trovato online') {
+                    // Nessun risultato trovato nel database locale
+                    this.mostraMessaggioNessunRisultatoOnline(title);
+                    return;
+                }
+                for (const movie of response.data.data) {
+                    if (movie.Poster === "N/A") {
+                        continue;
+                    }
+                    if (movie.Type === "movie") {
+                        filmResults.push(movie); // Aggiungo il film all'array dei film
+                    } else if (movie.Type === "series") {
+                        serieResults.push(movie); // Aggiungo la serie TV all'array delle serie TV
+                    }
+                }
+                if (filmResults.length > 0)
+                    this.generateFilmSlides(filmResults);
+                if (serieResults.length > 0)
+                    this.generateSerieSlides(serieResults);
+
+
+                this.changeSection("search-results");
+            } catch (error) {
+                console.error('Errore nella richiesta al server:', error);
+            }
+        },
+
+        searchMovieBetter: async function (title) {
+            this.changeSection("loader");
+            const wrapperfilm = document.querySelector("#search-results #film");
+            wrapperfilm.innerHTML = "";
+            const wrapperserie = document.querySelector("#search-results #serie");
+            wrapperserie.innerHTML = "";
+
+            const header = document.querySelector("#search-results .heading");
+
+            const prevHeadingTitle = header.querySelector(".heading-title");
+            if (prevHeadingTitle) {
+                prevHeadingTitle.remove();
+            }
+
+
+
+            const filmResults = [];
+            const serieResults = [];
+            try {
+                const url = this.getHost() + "s=" + title + "&";
+                const response = await axios.post('http://localhost:3000/api/request-to-server-better', { title, url })
 
                 if (response.data.message === 'Titolo non trovato online') {
                     // Nessun risultato trovato nel database locale
@@ -492,7 +540,8 @@ window.onload = () => {
 
         },
 
-
+        
+    
 
         sectionOpened: "popular",
         changeSection: function (name) {
@@ -506,6 +555,12 @@ window.onload = () => {
 
 
     };
+
+    const searchBetterButton = document.querySelector(".cerca-meglio");
+        searchBetterButton.addEventListener("click", () => {
+            console.log(ultimaRicerca);
+            Ricerca.searchMovieBetter(ultimaRicerca);
+        })
 
 
     const searchInputs = document.querySelectorAll(".search-input");
@@ -569,6 +624,7 @@ window.onload = () => {
                         const suggestionsDiv = suggestionsDivs[index];
                         hideSuggestions(suggestionsDiv);
                     });
+                    ultimaRicerca=suggestion.Title;
                     Ricerca.searchMovieLocal(suggestion.Title);
                 });
 
@@ -593,6 +649,7 @@ window.onload = () => {
     searchButtons.forEach(button => {
         button.addEventListener("keydown", async (event) => {
             if (!event.isComposing && event.key === "Enter") {
+                ultimaRicerca = event.target.value;
                 Ricerca.searchMovieLocal(event.target.value);
             }
 
@@ -605,5 +662,14 @@ window.onload = () => {
     });
 
 
+    
+
+
+    const logo = document.querySelector(".logo img")
+    logo.addEventListener("click", () => {
+        Ricerca.changeSection("popular")
+    })
+
     Ricerca.getPopulars();
 };
+

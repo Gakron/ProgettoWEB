@@ -27,6 +27,7 @@ header {
     margin: 15px 0px 10px 15px;
     width: 200px;
     height: 100%;
+    cursor: pointer;
 }
 
 .search-box {
@@ -280,12 +281,26 @@ header {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
+    background-color:transparent;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
+.spinner {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #333333;
+    -webkit-mask: radial-gradient(circle closest-side at 50% 40%,#0000 94%, #000);
+    transform-origin: 50% 40%;
+    animation: spinner-pl92zb 1s infinite linear;
+ }
+ 
+ @keyframes spinner-pl92zb {
+    100% {
+       transform: rotate(1turn);
+    }
+ }
 
 
 .hidden {
