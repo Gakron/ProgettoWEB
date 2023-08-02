@@ -5,29 +5,14 @@ const swiperWrapper = document.querySelector('.swiper-wrapper');
 
 const prevButton = document.querySelector('.swiper-button-prev');
 const nextButton = document.querySelector('.swiper-button-next');
-const slideWidth = 225; // Larghezza della slide, considerando margini
 
+const slideWidth = 225; // Larghezza della slide, considerando margini
 let currentPositionFilm = 0;
 let currentPositionSerie = 0;
+
 let ultimaRicerca;
+let currentMedia; //occhio che salva l'id, non il titolo
 
-// BOTTONI CHE FUNZIONAVANO MA ERANO STATICI
-// let currentPosition = 0;
-// prevButton.addEventListener('click', () => {
-//     currentPosition = Math.max(currentPosition - slideWidth, 0);
-//     updateSwiperPosition();
-// });
-
-// nextButton.addEventListener('click', () => {
-//     let maxPosition = swiperWrapper.scrollWidth - swiperContainer.offsetWidth;
-//     currentPosition = Math.min(currentPosition + slideWidth, maxPosition);
-//     updateSwiperPosition();
-// });
-
-
-// function updateSwiperPosition() {
-//     swiperWrapper.style.transform = `translateX(-${currentPosition}px)`;
-// }
 
 
 
@@ -535,13 +520,43 @@ window.onload = () => {
             console.log(movie.Genre);
             genreDom.innerHTML = "Genre: " + response.data.Genre
 
-            this.changeSection("movie-info");
 
+            currentMedia = movie.imdbID;
+            this.changeSection("movie-info");
+        },
+
+        getCurrentDateAndHour: function () {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Mese è zero-based (0 per gennaio, 11 per dicembre), quindi aggiungo 1
+            const year = today.getFullYear();
+            const hours = String(today.getHours()).padStart(2, '0');
+            const minutes = String(today.getMinutes()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}`;        
+        },
+
+        getCurrentDate: function () {
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Mese è zero-based (0 per gennaio, 11 per dicembre), quindi aggiungo 1
+            const year = today.getFullYear();
+
+            return `${year}-${month}-${day}`;        
+        },
+
+        markAsWatched: async function () {
+            const id = currentMedia;
+            const utente = sessionStorage.username;
+            const date = this.getCurrentDate()
+            console.log(date);
+            const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
+            if(response.data === "Già visto"){
+                alert("This is already marked as seen");
+            }
 
         },
 
-        
-    
 
         sectionOpened: "popular",
         changeSection: function (name) {
@@ -557,10 +572,10 @@ window.onload = () => {
     };
 
     const searchBetterButton = document.querySelector(".cerca-meglio");
-        searchBetterButton.addEventListener("click", () => {
-            console.log(ultimaRicerca);
-            Ricerca.searchMovieBetter(ultimaRicerca);
-        })
+    searchBetterButton.addEventListener("click", () => {
+        console.log(ultimaRicerca);
+        Ricerca.searchMovieBetter(ultimaRicerca);
+    })
 
 
     const searchInputs = document.querySelectorAll(".search-input");
@@ -624,7 +639,7 @@ window.onload = () => {
                         const suggestionsDiv = suggestionsDivs[index];
                         hideSuggestions(suggestionsDiv);
                     });
-                    ultimaRicerca=suggestion.Title;
+                    ultimaRicerca = suggestion.Title;
                     Ricerca.searchMovieLocal(suggestion.Title);
                 });
 
@@ -662,16 +677,21 @@ window.onload = () => {
     });
 
 
-    const profile= document.querySelector(".profile");
-    profile.addEventListener("click", ()=> {
+    const profile = document.querySelector(".profile");
+    profile.addEventListener("click", () => {
         window.location.assign("/public/pages/profile.html")
     })
-    const profile_txt=document.querySelector(".profile-box span");
-    profile_txt.addEventListener("click", ()=> {
+    const profile_txt = document.querySelector(".profile-box span");
+    profile_txt.addEventListener("click", () => {
         window.location.assign("/public/pages/profile.html")
     })
 
-    
+
+    const seenButton = document.querySelector(".visto-button");
+    seenButton.addEventListener("click", () => {
+        Ricerca.markAsWatched();
+    })
+
     const logo = document.querySelector(".logo img")
     logo.addEventListener("click", () => {
         Ricerca.changeSection("popular")

@@ -389,6 +389,126 @@ app.post('/api/request-plot', async (req, res) => {
 
 });
 
+function controllaSeGiàVisto(utente, id) {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM visti WHERE username = ? AND id_film = ?",
+      [utente, id],
+      (err, results) => {
+        if (err) {
+          console.error('Errore nella verifica dei dati nel database:', err);
+          reject(err);
+        } else if (results.length > 0) {
+          resolve(true); //Già lo aveva visto
+        } else {
+          resolve(false); //Non lo aveva visto
+        }
+      }
+    );
+  });
+}
+
+app.post('/api/mark-as-watched', async (req, res) => {
+  const { id, utente, date } = req.body;
+
+  const giàVisto = await controllaSeGiàVisto(utente, id);
+
+  if (giàVisto) {
+    res.send("Già visto");
+    return;
+  }
+  var sql = "SELECT Type FROM media WHERE imdbID = ?";
+  connection.query(sql, id, (err, risultato) => {
+    if (err) {
+      console.error('Errore nell\'inserimento dei dati nel database:', err);
+      res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+      return;
+    }
+    var sql = "INSERT INTO visti SET ?";
+    connection.query(sql, { username: utente, id_film: id, tipo: risultato[0].Type, data_visione: date }, (err, results) => {
+      if (err) {
+        console.error('Errore nell\'inserimento dei dati nel database:', err);
+        res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+        return;
+      } else {
+        console.log("inserito");
+      }
+    })
+  })
+
+})
+
+
+
+app.post('/api/get-watched', async (req, res) => {
+
+  const username = req.body.username;
+  let tot_film = 0;
+  let tot_serie = 0;
+  let tempo_film = 0;
+
+  const queryVisti = `SELECT id_film FROM visti WHERE username = ?`;
+  connection.query(queryVisti, [username], (err, resultsVisti) => {
+    if (err) throw err;
+
+    //ho preso tutti i film visti nel formato {id_film: 'id'}
+    const filmVistiIds = resultsVisti.map((row) => row.id_film);
+
+    //adessp ho tutti i film visti qui {'id','id','id'};
+    // console.log(filmVistiIds);
+
+    const queryMedia = `SELECT imdbID, Runtime, Type FROM media WHERE imdbID IN (?)`;
+
+    connection.query(queryMedia, [filmVistiIds], (err, resultsMedia) => {
+      if (err) throw err;
+      //Ora dentro result media ho gli id dei film e il runtime di ogni film
+
+
+      const updatedMediaArray = resultsMedia.map((media) => ({
+        ...media, // Manteniamo gli altri campi inalterati
+        Runtime: media.Runtime.replace(' min', ''), // Rimuoviamo la parola "min" dal campo "Runtime"
+      }));
+
+      updatedMediaArray.forEach(media => {
+        if (media.Type === "series") {
+          tot_serie++;
+        }
+        if (media.Type === "movie") {
+          tot_film++;
+          if (media.Runtime !== 'N/A') {
+            tempo_film = tempo_film + parseInt(media.Runtime);
+          }
+        }
+      });
+
+      console.log("tempo film", tempo_film);
+      console.log("tot film: ", tot_film);
+      console.log("tot_serie: ", tot_serie);
+
+      res.json({
+        tot_film: tot_film,
+        tot_serie: tot_serie,
+        tempo_film: tempo_film,
+      });
+    })
+  })
+})
+
+
+app.post('/api/get-comments-number', async (req, res) => {
+
+  const username = req.body.username;
+
+  const query = `SELECT username FROM commenti WHERE username = ?`;
+  connection.query(query, [username], (err, data) => {
+    if (err) throw err;
+    res.json(data.length);
+  })
+
+})
+
+
+
 
 
 
