@@ -8,7 +8,8 @@ window.onload = () => {
     })
 
 
-    const profile_name=document.querySelector(".profile-name");
-    profile_name.innerHTML="";
+    const profile_name=document.querySelector(".username");
+    const username=sessionStorage.getItem("username");
+    profile_name.innerHTML=username;
 
 }

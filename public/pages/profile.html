@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>T-Sho - Profile</title>
-        <link rel="stylesheet" href="/public/assets/css/profile.css"">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Sho - Profile</title>
+    <link rel="stylesheet" href="/public/assets/css/profile.css"">
+</head>
+
+
 
     <body>
-    
         <header>
             <div class=" logo">
                 <img src="/public/assets/images/logo.svg" alt="Logo">
             </div>
 
             <div class="profile-box">
-                <span onClick="location.href='profile.html';">Your profile</span>
+                <span onClick="location.href='profile.html';">Profile</span>
                 <img class='profile' src="/public/assets/images/profile.svg" onClick="location.href='page.html';">
             </div>
 
         </header>
 
+
         <main>
-            <div class="profile-info">
-                <h1 class="profile-name"></h1>
-                <p class="profile-bio">I'm a passionate streamer!</p>
-    
-                <div class="profile-stats">
-                    <div class="stat">
-                        <div class="stat-title">Ore film</div>
-                        <div class="stat-value">120</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-title">Ore serie</div>
-                        <div class="stat-value">200</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-title">Visti</div>
-                        <div class="stat-value">500</div>
-                    </div>
+
+            <div class="profile-page">
+                <div class="profile-info">
+                  <img class="profile-picture" src="/public/assets/images/profile.svg" alt="Profile Picture">
+                  <div class="username"></div>
+                  <div class="comment-count">10 commenti</div>
                 </div>
-            </div>
+                <div class="slider-container">
+                  <div class="slider">
+                    <div class="slide ore-film"></div>
+                    <div class="slide film"></div>
+                    <div class="slide ore-serie"></div>
+                    <div class="slide serie"></div>
+                  </div>
+                </div>
+              </div>
         </main>
 
 

@@ -11,6 +11,8 @@ body {
     min-height: 100vh;
 }
 
+
+
 header {
     display: flex;
     justify-content: space-between;
@@ -28,7 +30,7 @@ header {
 
 .profile-box {
     display: flex;
-    align-items: center;
+    margin-right: 20px;
 }
 
 .profile-box span {
@@ -37,6 +39,7 @@ header {
     font-size: 18px;
     font-weight: 540;
     margin-left: 15px;
+
 }
 
 .profile-box .profile {
@@ -45,47 +48,76 @@ header {
     height: 40px;
 }
 
+.profile-box span {
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 540;
+  margin-top: 20px;
+  margin-right: 5px;
+}
+
 main {
     padding: 20px;
 }
 
-.profile-info {
-    text-align: center;
-}
 
-.profile-picture {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-}
 
-.profile-name {
-    font-size: 24px;
-    font-weight: bold;
-}
 
-.profile-bio {
-    font-size: 18px;
-    margin-bottom: 20px;
-}
-
-.profile-stats {
+.profile-page {
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .profile-info {
     display: flex;
-    justify-content: space-around;
-}
-
-.stat {
-    text-align: center;
-}
-
-.stat-title {
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .username {
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 5px;
-}
+    margin-right: 10px;
+  }
+  
+  .comment-count {
+    font-size: 14px;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
 
-.stat-value {
-    font-size: 24px;
-    color: #333;
-}
+  }
+  
+  .slider-container {
+    overflow: hidden;
+    position: relative;
+    height: 100px;
+  }
+  
+  .slider {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .slide {
+    flex: 0 0 calc(25% - 10px);
+    height: 80px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  

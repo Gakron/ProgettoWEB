@@ -50,7 +50,7 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
     return;
   }
-  var sql = 'SELECT * FROM Utenti WHERE email =?';
+  var sql = 'SELECT * FROM Utenti WHERE username =?';
   try {
     connection.query(sql, [inputData.email], function (err, data, fields) {
       if (err && err != null) {
@@ -59,12 +59,12 @@ app.post("/register", (req, res) => {
         return;
       }
       else if (data.length > 0) {
-        res.message = inputData.email + "già registrata";
+        res.message = inputData.email + "già registrato";
         res.sendStatus(409);
         return;
       } else {
         var sql = "INSERT INTO utenti SET ?";
-        connection.query(sql, { email: inputData.email, password: inputData.password }, async (err, data) => {
+        connection.query(sql, { username: inputData.email, password: inputData.password }, async (err, data) => {
           if (err && err != null) {
             res.message = "Error: " + err.message;
             res.sendStatus(500);
@@ -86,7 +86,7 @@ app.post("/login", (req, res) => {
 
   const { email, password } = req.body;
 
-  var sql = 'SELECT * FROM Utenti WHERE email =?';
+  var sql = 'SELECT * FROM Utenti WHERE username =?';
   connection.query(sql, [email], function (err, data, fields) {
     if (err && err != null) {
       res.message = "Error: " + err.message;

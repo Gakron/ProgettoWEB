@@ -15,6 +15,10 @@ signup_to_log.addEventListener("click", () => {
     form_login.classList.remove("hidden");
 })
 
+
+
+
+
 const register = () =>
     fetch("http://localhost:3000/register", {
         method: "POST",
@@ -29,17 +33,20 @@ const register = () =>
         }
     }).then(res => {
         if (res.ok)
-            var msg=("TI SEI REGISTRATO!");
+            var msg = ("TI SEI REGISTRATO!");
         else if (res.status == 409)
-            var msg=("EMAIL GIA REGISTRATA")
+            var msg = ("EMAIL GIA REGISTRATA")
         else if (res.status == 400)
-            var msg=("LE PASSWORD NON CORRISPONDONO")
+            var msg = ("LE PASSWORD NON CORRISPONDONO")
         else
-            var msg=("GENERIC ERROR")
+            var msg = ("GENERIC ERROR")
     })
         .catch(_ => {
-            var msg=("GENERIC ERROR")
+            var msg = ("GENERIC ERROR")
         })
+
+
+
 
 
 const login = () =>
@@ -54,12 +61,15 @@ const login = () =>
             "Content-type": "application/json; charset=UTF-8"
         }
 
-    }).then(res=>{
-        if(res.ok && res.status==200)
-        window.location.assign("/public/pages/home.html");
+    }).then(res => {
+        if (res.ok && res.status == 200) {
+            const username = document.getElementById("lgn_email").value;
+            sessionStorage.setItem('username', username);
+            window.location.assign("/public/pages/home.html");
+        }
+
         else
             alert(res.statusText);
     })
 
 
-    
