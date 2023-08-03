@@ -604,7 +604,7 @@ window.onload = () => {
                 commentsContainer.innerHTML = "Ancora nessun commento";
             }
             else {
-                commenti.data.forEach((commento) => {
+                commenti.data.reverse().forEach((commento) => {
                     console.log(commento)
                     const commentoDiv = document.createElement("div");
                     commentoDiv.classList.add("commento");
