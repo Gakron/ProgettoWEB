@@ -426,78 +426,6 @@ app.post('/api/request-plot', async (req, res) => {
 })
 
 
-//     else {
-//     console.log("non ho il plot");
-//     //Se il film non è stato ancora visto, esegui la richiesta esterna
-//     const response = await axios.get(url + "i=" + id + "&plot=full&");
-//     var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
-//     const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
-//     await connection1.query(sql, data).then((results3) => {
-//       const body = {
-//         Runtime: data[0],
-//         Genre: data[1],
-//         Plot: data[2],
-//         Released: data[3],
-//         Seen: false
-//       }
-
-//       res.json(body);
-//     })
-//   }
-//   }).catch((err) => {
-//     console.error('Errore nell\'aggiornamento dei dati nel database:', error);
-//     res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
-//   })
-// })
-
-
-
-
-// app.post('/api/request-plot', async (req, res) => {
-//   const connection1 = connection.promise();
-
-//   try {
-//     const { id, url, username } = req.body;
-
-//     // Query per selezionare i dati del film dalla tabella media in base all'imdbID
-//     const query = "SELECT * FROM media WHERE imdbID = ?";
-//     const results = await connection1.query(query, id);
-
-//     if (results[0].length > 0) {
-//       // Il film è già presente nel database, otteniamo i dati dalla prima riga dei risultati
-//       const movieData = results[0][0];
-//       const body = {
-//         Genre: movieData.Genre,
-//         Runtime: movieData.Runtime,
-//         Plot: movieData.Plot,
-//         Released: movieData.Released,
-//         Seen: true
-//       };
-//       res.json(body);
-//     } else {
-//       // Il film non è stato ancora visto, eseguiamo una richiesta esterna all'API
-//       const response = await axios.get(url + "i=" + id + "&plot=full&");
-
-//       // Aggiorniamo i dati del film nella tabella media
-//       const updateQuery = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
-//       const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
-//       await connection1.query(updateQuery, data);
-
-//       const body = {
-//         Genre: response.data.Genre,
-//         Runtime: response.data.Runtime,
-//         Plot: response.data.Plot,
-//         Released: response.data.Released,
-//         Seen: false
-//       };
-//       res.json(body);
-//     }
-//   } catch (error) {
-//     console.error('Errore nell\'aggiornamento dei dati nel database:', error);
-//     res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
-//   }
-// })
-
 async function controllaSeGiàVisto(utente, id) {
   const connection1 = connection.promise();
   try {
@@ -544,32 +472,6 @@ app.post('/api/mark-as-watched', async (req, res) => {
   }
 });
 
-// app.post('/api/mark-as-watched', async (req, res) => {
-//   const { id, utente, date } = req.body;
-
-//   const giàVisto = await controllaSeGiàVisto(utente, id);
-//   console.log("sono nel controlloGiàVisto", giàVisto)
-
-//   if (giàVisto) {
-//     res.send("Già visto");
-//     return;
-//   }
-
-//   const connection1 = connection.promise()
-//   var sql = "SELECT Type FROM media WHERE imdbID = ?";
-//   await connection1.query(sql, id)
-//     .then(async (risultato) => {
-//       var sql = "INSERT INTO visti SET ?";
-//       await connection1.query(sql, { username: utente, id_film: id, tipo: risultato[0].Type, data_visione: date })
-//         .then(async (results) => {
-//           console.log("inserito");
-//         }).catch((err) => {
-//           console.error('Errore nell\'inserimento dei dati nel database:', err);
-//           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
-//           return;
-//         })
-//     })
-// });
 
 
 
@@ -671,11 +573,6 @@ app.post('/api/seen-films', async (req, res) => {
 app.post('/api/submit-comment', async (req, res) => {
   const { username, id, comment, data } = req.body;
 
-  console.log(username);
-  console.log(id);
-  console.log(comment);
-  console.log(data);
-
   let query = "INSERT INTO commenti SET ?";
 
   connection.query(query, { username: username, id_film: id, commento: comment, data_commento: data }, async (err, results) => {
@@ -684,8 +581,7 @@ app.post('/api/submit-comment', async (req, res) => {
       res.status(500).json({ error: 'Errore nell\'inserimento del commento nel database' });
       return;
     } else {
-      console.log("inserito");
-    }
+      res.json({ message: "inserito" });    }
 
   })
 })

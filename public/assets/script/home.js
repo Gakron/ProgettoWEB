@@ -519,31 +519,42 @@ window.onload = () => {
 
             commentForm.appendChild(commentInput);
             commentForm.appendChild(submitCommentButton);
+
+            
+
+
             submitCommentButton.addEventListener("click", async () => {
                 const commentText = commentInput.value;
 
                 await this.submitComment(movie, commentText);
                 commentInput.value = "";
+                                await this.getMovieInfo(movie);
+
             });
         },
+
+        
 
         submitComment: async function (movie, commentText) {
             try {
                 const data = this.getCurrentDate();
                 const username = sessionStorage.getItem("username");
-                const id = movie.imdbID
+                const id = movie.imdbID;
                 console.log("id film: ", id, "username: ", username, "data: ", data);
                 const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: id, comment: commentText, data: data });
-                // Esempio: Mostra un messaggio di successo o effettua altre azioni necessarie
-                console.log('Commento inviato con successo!', response.data);
+                console.log(response);
+                this.getMovieInfo(movie);
             } catch (error) {
                 // Esempio: Gestisci eventuali errori o mostra un messaggio di errore
                 console.error('Errore durante l\'invio del commento:', error.message);
             }
+            //  this.getMovieInfo(movie);
+
+
         },
 
         getMovieInfo: async function (movie) {
-        
+
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
@@ -551,7 +562,7 @@ window.onload = () => {
 
 
             const response = await axios.post('http://localhost:3000/api/request-plot', { id, url, username })
-            console.log("ultima speranza",response);
+            console.log("ultima speranza", response);
             const titleDom = document.querySelector("#movie-info .movie-info-text h2");
             titleDom.innerHTML = movie.Title;
 
@@ -573,14 +584,17 @@ window.onload = () => {
             if (response.data.Seen === true) {
                 bottone.innerHTML = "Seen";
                 bottone.disabled = true;
-                await this.addCommentForm(movie);
+                const form=document.querySelector(".comment-input");
+                if(!form){
+                    await this.addCommentForm(movie);
+                }
 
             }
-            else{
+            else {
                 bottone.innerHTML = "Mark as watched";
 
             }
-           
+
             const commentsContainer = document.querySelector(".comments-container")
 
             const commenti = await this.recuperaCommenti(id);
@@ -651,6 +665,8 @@ window.onload = () => {
             const id = currentMedia;
             const utente = sessionStorage.username;
             const date = this.getCurrentDate()
+            console.log("questo è l'id:", id);
+            console.log("questo è currentMedia: ", currentMedia);
             try {
                 const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
 
@@ -659,8 +675,7 @@ window.onload = () => {
                 watchButton.innerHTML = "Seen";
                 watchButton.disabled = true;
                 await this.addCommentForm(currentMedia);
-                window.location.reload();
-
+                // await this.getMovieInfo(id)
             }
             catch (error) {
                 console.error('Errore nel segnare il film come visto:', error.message);
