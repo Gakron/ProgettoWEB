@@ -499,10 +499,9 @@ window.onload = () => {
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
+            const username = sessionStorage.getItem("username");
 
-
-            const response = await axios.post('http://localhost:3000/api/request-plot', { id, url })
-            console.log(response);
+            const response = await axios.post('http://localhost:3000/api/request-plot', { id, url, username })
 
             const titleDom = document.querySelector("#movie-info .movie-info-text h2");
             titleDom.innerHTML = movie.Title;
@@ -520,6 +519,15 @@ window.onload = () => {
             console.log(movie.Genre);
             genreDom.innerHTML = "Genre: " + response.data.Genre
 
+            console.log(response.data.Seen);
+            const bottone=document.querySelector(".visto-button")
+            if(response.data.Seen){
+                bottone.innerHTML="Seen";
+                bottone.disabled = true;
+            }
+            else{
+                bottone.innerHTML="Mark as seen";
+            }
 
             currentMedia = movie.imdbID;
             this.changeSection("movie-info");
@@ -533,7 +541,7 @@ window.onload = () => {
             const hours = String(today.getHours()).padStart(2, '0');
             const minutes = String(today.getMinutes()).padStart(2, '0');
 
-            return `${year}-${month}-${day} ${hours}:${minutes}`;        
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
         },
 
         getCurrentDate: function () {
@@ -542,18 +550,21 @@ window.onload = () => {
             const month = String(today.getMonth() + 1).padStart(2, '0'); // Mese è zero-based (0 per gennaio, 11 per dicembre), quindi aggiungo 1
             const year = today.getFullYear();
 
-            return `${year}-${month}-${day}`;        
+            return `${year}-${month}-${day}`;
         },
 
         markAsWatched: async function () {
             const id = currentMedia;
             const utente = sessionStorage.username;
             const date = this.getCurrentDate()
-            console.log(date);
             const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
-            if(response.data === "Già visto"){
+            if (response.data === "Già visto") {
                 alert("This is already marked as seen");
             }
+            const watchButton = document.querySelector('.visto-button');
+            watchButton.innerHTML = "Seen";
+            watchButton.disabled = true;
+
 
         },
 
@@ -690,6 +701,8 @@ window.onload = () => {
     const seenButton = document.querySelector(".visto-button");
     seenButton.addEventListener("click", () => {
         Ricerca.markAsWatched();
+        seenButton.innerHTML="Seen";
+        seenButton.disabled=true;
     })
 
     const logo = document.querySelector(".logo img")

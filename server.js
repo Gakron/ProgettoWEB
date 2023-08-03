@@ -359,34 +359,61 @@ app.post('/api/request-to-server-better', async (req, res) => {
 
 app.post('/api/request-plot', async (req, res) => {
   try {
-    console.log("sono entrato nella richiesta del plot")
-    const { id, url } = req.body;
-    console.log(id);
-    const response = await axios.get(url + "i=" + id + "&plot=full&");
-    const body = {
-      Genre: response.data.Genre,
-      Runtime: response.data.Runtime,
-      Plot: response.data.Plot,
-      Released: response.data.Released
-    }
-
-    var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
-    const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
-    connection.query(sql, data, (err, results) => {
+    const { id, url, username } = req.body;
+    let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
+    connection.query(query, [username, id], async(err, results) => {
       if (err) {
         console.error('Errore nell\'aggiornamento dei dati nel database:', err);
         res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
         return;
-      } else {
-        console.log("aggiornato");
       }
-      res.json(body);
-    })
+      if (results.length > 0 && results[0].data_visione) {
+        let query="SELECT * FROM media WHERE imdbID = ?";
+        connection.query(query, [results[0].id_film], async(err, results2) => {
+          if (err) {
+            console.error('Errore nell\'aggiornamento dei dati nel database:', err);
+            res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
+            return;
+          }
+          const body = {
+            Genre: results2[0].Genre,
+            Runtime: results2[0].Runtime,
+            Plot: results2[0].Plot,
+            Released: results2[0].Released,
+            Seen: true
+          };
+          res.json(body);
+
+        })
+      } else {
+        // Se il film non è stato ancora visto, esegui la richiesta esterna
+        const response = await axios.get(url + "i=" + id + "&plot=full&");
+        const body = {
+          Genre: response.data.Genre,
+          Runtime: response.data.Runtime,
+          Plot: response.data.Plot,
+          Released: response.data.Released,
+          Seen: false
+        };
+  
+        var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
+        const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
+        connection.query(sql, data, (err, results) => {
+          if (err) {
+            console.error('Errore nell\'aggiornamento dei dati nel database:', err);
+            res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
+            return;
+          } else {
+            console.log("aggiornato");
+          }
+          res.json(body);
+        });
+      }
+    });
   } catch (error) {
     console.error('Errore nella richiesta del plot:', error);
     res.status(500).json({ error: 'Errore nella richiesta del plot' });
   }
-
 });
 
 function controllaSeGiàVisto(utente, id) {
@@ -481,9 +508,6 @@ app.post('/api/get-watched', async (req, res) => {
         }
       });
 
-      console.log("tempo film", tempo_film);
-      console.log("tot film: ", tot_film);
-      console.log("tot_serie: ", tot_serie);
 
       res.json({
         tot_film: tot_film,
@@ -509,9 +533,24 @@ app.post('/api/get-comments-number', async (req, res) => {
 
 
 
+app.post('/api/seen-films', async (req, res) => {
 
+  const username = req.body.username;
+  let query = `SELECT id_film FROM visti WHERE username = ? ORDER BY data_visione DESC`;
+  connection.query(query, [username], (err, data) => {
+    if (err) throw err;
+    const filmVistiIds = data.map((row) => row.id_film);
+
+    let query = "SELECT * FROM media WHERE imdbID IN (?)";
+    connection.query(query, [filmVistiIds], (err, resultsMedia) => {
+      if (err) throw err;
+
+      res.json({ resultsMedia });
+    })
+  })
+})
 
 
 app.listen(3000, () => {
   console.log("In ascolto sulla porta 3000");
-});
+})

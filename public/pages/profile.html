@@ -24,24 +24,49 @@
         </header>
 
 
-        <main>
+        <section id="profilo">
 
             <div class="profile-page">
                 <div class="profile-info">
                   <img class="profile-picture" src="/public/assets/images/profile.svg" alt="Profile Picture">
                   <div class="username"></div>
-                  <div class="comment-count"></div>
+                  <div class="comment-count">0 commenti</div>
                 </div>
-                <div class="slider-container">
-                  <div class="slider">
-                    <div class="slide film"></div>
-                    <div class="slide tempo-film"></div>
-                    <div class="slide serie"></div>
-                    <div class="slide tempo-serie"></div>
+                <div class="data">
+                  <div class="data-containers">
+                    <div class="info film">
+                      <span class="label">Film visti:</span>
+                      <span class="count">0</span>
+                    </div>
+                    <div class="info tempo-film">
+                      <span class="label">Totale ore film:</span>
+                      <span class="count">0</span>
+                    </div>
+                    <div class="info serie">
+                      <span class="label">Serie viste:</span>
+                      <span class="count">0</span>
+                    </div>
+                    <div class="info tempo-serie">
+                      <span class="label">Totale ore serie:</span>
+                      <span class="count">0</span>
+                    </div>
+                  </div>
+                </div>
+
+              <div class="parte2">
+                <div class="swiper-container" id="film-swiper">
+                  <div class="swiper-wrapper" id="film">
+                  </div>
+                </div>
+                <div class="swiper-container" id="serie-swiper">
+                  <div class="swiper-wrapper" id="serie">
                   </div>
                 </div>
               </div>
-        </main>
+
+              </div>
+            </section>
+
 
 
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
