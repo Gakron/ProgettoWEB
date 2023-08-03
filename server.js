@@ -361,15 +361,15 @@ app.post('/api/request-plot', async (req, res) => {
   try {
     const { id, url, username } = req.body;
     let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
-    connection.query(query, [username, id], async(err, results) => {
+    connection.query(query, [username, id], async (err, results) => {
       if (err) {
         console.error('Errore nell\'aggiornamento dei dati nel database:', err);
         res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
         return;
       }
       if (results.length > 0 && results[0].data_visione) {
-        let query="SELECT * FROM media WHERE imdbID = ?";
-        connection.query(query, [results[0].id_film], async(err, results2) => {
+        let query = "SELECT * FROM media WHERE imdbID = ?";
+        connection.query(query, [results[0].id_film], async (err, results2) => {
           if (err) {
             console.error('Errore nell\'aggiornamento dei dati nel database:', err);
             res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
@@ -395,7 +395,7 @@ app.post('/api/request-plot', async (req, res) => {
           Released: response.data.Released,
           Seen: false
         };
-  
+
         var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
         const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
         connection.query(sql, data, (err, results) => {
@@ -536,15 +536,27 @@ app.post('/api/get-comments-number', async (req, res) => {
 app.post('/api/seen-films', async (req, res) => {
 
   const username = req.body.username;
-  let query = `SELECT id_film FROM visti WHERE username = ? ORDER BY data_visione DESC`;
-  connection.query(query, [username], (err, data) => {
+  let query = `SELECT id_film FROM visti WHERE username = ?`;
+  connection.query(query, [username], async (err, data) => {
     if (err) throw err;
+
     const filmVistiIds = data.map((row) => row.id_film);
+    console.log(filmVistiIds)
 
-    let query = "SELECT * FROM media WHERE imdbID IN (?)";
-    connection.query(query, [filmVistiIds], (err, resultsMedia) => {
+    if (filmVistiIds.length === 0) {
+
+      res.json({ message: "nessun risultato" })
+      return;
+    }
+    let secondQuery = "SELECT * FROM media";
+    
+    if (filmVistiIds.length > 0) {
+      secondQuery += " WHERE imdbID IN (?)";
+    }
+    
+    connection.query(secondQuery, [filmVistiIds], async (err, resultsMedia) => {
       if (err) throw err;
-
+      
       res.json({ resultsMedia });
     })
   })

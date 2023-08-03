@@ -64,7 +64,10 @@ window.onload = () => {
 
         const response = await axios.post("http://localhost:3000/api/seen-films", { username })
         const risposta = response.data.resultsMedia;
-
+        if(response.data.message==="nessun risultato"){
+            filmWrapper.innerHTML="Nessun film visto";
+            return;
+        }
         for (let i = risposta.length - 1; i >= 0; i--) {
             const movie = risposta[i];
 
@@ -120,6 +123,11 @@ window.onload = () => {
 
         const response = await axios.post("http://localhost:3000/api/seen-films", { username })
         const risposta = response.data.resultsMedia;
+
+        if(response.data.message==="nessun risultato"){
+            serieWrapper.innerHTML="Nessuna serie vista";
+            return;
+        }
 
         for (let i = risposta.length - 1; i >= 0; i--) {
             const movie = risposta[i];
