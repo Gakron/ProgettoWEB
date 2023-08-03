@@ -172,7 +172,6 @@ app.post('/api/request-local', async (req, res) => {
   try {
     const { title, url } = req.body;
     console.log('Titolo:', title);
-    console.log("sto chiedendo al db!")
     connection.query(
       'SELECT * FROM media WHERE title LIKE ?',
       [`%${title}%`],
@@ -358,112 +357,220 @@ app.post('/api/request-to-server-better', async (req, res) => {
 
 
 app.post('/api/request-plot', async (req, res) => {
-  try {
-    const { id, url, username } = req.body;
-    let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
-    connection.query(query, [username, id], async (err, results) => {
-      if (err) {
-        console.error('Errore nell\'aggiornamento dei dati nel database:', err);
-        res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
-        return;
-      }
-      if (results.length > 0 && results[0].data_visione) {
-        let query = "SELECT * FROM media WHERE imdbID = ?";
-        connection.query(query, [results[0].id_film], async (err, results2) => {
-          if (err) {
-            console.error('Errore nell\'aggiornamento dei dati nel database:', err);
-            res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
-            return;
-          }
+  const connection1 = connection.promise()
+  const { id, url, username } = req.body;
+  let query = "SELECT * FROM media WHERE imdbID = ?";
+
+  await connection1.query(query, [id]).then(async (results) => {
+    console.log("risultati query", results);
+
+    if (results[0][0].Plot) {
+      console.log("ho il plot");
+      let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
+      await connection1.query(query, [username, id]).then(async (results2) => {
+        console.log("risultati query annidata", results2);
+        if (results2[0].length > 0) {
           const body = {
-            Genre: results2[0].Genre,
-            Runtime: results2[0].Runtime,
-            Plot: results2[0].Plot,
-            Released: results2[0].Released,
+            Genre: results[0][0].Genre,
+            Runtime: results[0][0].Runtime,
+            Plot: results[0][0].Plot,
+            Released: results[0][0].Released,
             Seen: true
-          };
-          res.json(body);
-
-        })
-      } else {
-        // Se il film non è stato ancora visto, esegui la richiesta esterna
-        const response = await axios.get(url + "i=" + id + "&plot=full&");
-        const body = {
-          Genre: response.data.Genre,
-          Runtime: response.data.Runtime,
-          Plot: response.data.Plot,
-          Released: response.data.Released,
-          Seen: false
-        };
-
-        var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
-        const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
-        connection.query(sql, data, (err, results) => {
-          if (err) {
-            console.error('Errore nell\'aggiornamento dei dati nel database:', err);
-            res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
-            return;
-          } else {
-            console.log("aggiornato");
           }
           res.json(body);
-        });
-      }
-    });
-  } catch (error) {
-    console.error('Errore nella richiesta del plot:', error);
-    res.status(500).json({ error: 'Errore nella richiesta del plot' });
-  }
-});
-
-function controllaSeGiàVisto(utente, id) {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT * FROM visti WHERE username = ? AND id_film = ?",
-      [utente, id],
-      (err, results) => {
-        if (err) {
-          console.error('Errore nella verifica dei dati nel database:', err);
-          reject(err);
-        } else if (results.length > 0) {
-          resolve(true); //Già lo aveva visto
-        } else {
-          resolve(false); //Non lo aveva visto
         }
-      }
-    );
-  });
+        else {
+          console.log("ho il plot, ma non ho visto il film");
+          const response = await axios.get(url + "i=" + id + "&plot=full&");
+          var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
+          const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
+          await connection1.query(sql, data).then((results3) => {
+            const body = {
+              Runtime: data[0],
+              Genre: data[1],
+              Plot: data[2],
+              Released: data[3],
+              Seen: false
+            }
+
+            res.json(body);
+          })
+        }
+      })
+
+    }
+    else {
+      console.log("non ho il plot, quindi non posso aver visto il film");
+      const response = await axios.get(url + "i=" + id + "&plot=full&");
+      var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
+      const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
+      await connection1.query(sql, data).then((results3) => {
+        const body = {
+          Runtime: data[0],
+          Genre: data[1],
+          Plot: data[2],
+          Released: data[3],
+          Seen: false
+        }
+
+        res.json(body);
+      }).catch((err) => {
+        console.error('Errore nel caso in cui ho il plot', error);
+        res.status(500).json({ error: 'Errore nel caso in cui ho il plot' });
+      })
+    }
+  }).catch((err) => {
+    console.error('Errore nel caso in cui ho il plot', error);
+    res.status(500).json({ error: 'Errore nel caso in cui ho il plot' });
+  })
+})
+
+
+//     else {
+//     console.log("non ho il plot");
+//     //Se il film non è stato ancora visto, esegui la richiesta esterna
+//     const response = await axios.get(url + "i=" + id + "&plot=full&");
+//     var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
+//     const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
+//     await connection1.query(sql, data).then((results3) => {
+//       const body = {
+//         Runtime: data[0],
+//         Genre: data[1],
+//         Plot: data[2],
+//         Released: data[3],
+//         Seen: false
+//       }
+
+//       res.json(body);
+//     })
+//   }
+//   }).catch((err) => {
+//     console.error('Errore nell\'aggiornamento dei dati nel database:', error);
+//     res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
+//   })
+// })
+
+
+
+
+// app.post('/api/request-plot', async (req, res) => {
+//   const connection1 = connection.promise();
+
+//   try {
+//     const { id, url, username } = req.body;
+
+//     // Query per selezionare i dati del film dalla tabella media in base all'imdbID
+//     const query = "SELECT * FROM media WHERE imdbID = ?";
+//     const results = await connection1.query(query, id);
+
+//     if (results[0].length > 0) {
+//       // Il film è già presente nel database, otteniamo i dati dalla prima riga dei risultati
+//       const movieData = results[0][0];
+//       const body = {
+//         Genre: movieData.Genre,
+//         Runtime: movieData.Runtime,
+//         Plot: movieData.Plot,
+//         Released: movieData.Released,
+//         Seen: true
+//       };
+//       res.json(body);
+//     } else {
+//       // Il film non è stato ancora visto, eseguiamo una richiesta esterna all'API
+//       const response = await axios.get(url + "i=" + id + "&plot=full&");
+
+//       // Aggiorniamo i dati del film nella tabella media
+//       const updateQuery = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
+//       const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
+//       await connection1.query(updateQuery, data);
+
+//       const body = {
+//         Genre: response.data.Genre,
+//         Runtime: response.data.Runtime,
+//         Plot: response.data.Plot,
+//         Released: response.data.Released,
+//         Seen: false
+//       };
+//       res.json(body);
+//     }
+//   } catch (error) {
+//     console.error('Errore nell\'aggiornamento dei dati nel database:', error);
+//     res.status(500).json({ error: 'Errore nell\'aggiornamento dei dati nel database' });
+//   }
+// })
+
+async function controllaSeGiàVisto(utente, id) {
+  const connection1 = connection.promise();
+  try {
+    const results = await connection1.query("SELECT * FROM visti WHERE username = ? AND id_film = ?", [utente, id]);
+    console.log(results[0].length);
+    return results[0].length;
+  } catch (err) {
+    console.error('Errore nella verifica dei dati nel database:', err);
+    throw err;
+  }
 }
+
 
 app.post('/api/mark-as-watched', async (req, res) => {
   const { id, utente, date } = req.body;
 
-  const giàVisto = await controllaSeGiàVisto(utente, id);
+  try {
+    // Controlla se il film è già stato segnato come visto dall'utente
+    const giàVisto = await controllaSeGiàVisto(utente, id);
+    console.log("sono nel controlloGiàVisto", giàVisto);
 
-  if (giàVisto) {
-    res.send("Già visto");
-    return;
-  }
-  var sql = "SELECT Type FROM media WHERE imdbID = ?";
-  connection.query(sql, id, (err, risultato) => {
-    if (err) {
-      console.error('Errore nell\'inserimento dei dati nel database:', err);
-      res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+    if (giàVisto) {
+      res.send("Già visto");
       return;
     }
-    var sql = "INSERT INTO visti SET ?";
-    connection.query(sql, { username: utente, id_film: id, tipo: risultato[0].Type, data_visione: date }, (err, results) => {
-      if (err) {
-        console.error('Errore nell\'inserimento dei dati nel database:', err);
-        res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
-        return;
-      } else {
-        console.log("inserito");
-      }
-    })
-  })
 
-})
+    const connection1 = connection.promise();
+    // Recupera il tipo di film dalla tabella 'media'
+    const risultato = await connection1.query("SELECT Type FROM media WHERE imdbID = ?", id);
+
+    // Inserisce la nuova voce nella tabella 'visti'
+    const insertResult = await connection1.query("INSERT INTO visti SET ?", {
+      username: utente,
+      id_film: id,
+      tipo: risultato[0].Type,
+      data_visione: date
+    });
+
+    console.log("inserito");
+    res.send("Film segnato come già visto!");
+  } catch (err) {
+    console.error('Errore nell\'inserimento dei dati nel database:', err);
+    res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+  }
+});
+
+// app.post('/api/mark-as-watched', async (req, res) => {
+//   const { id, utente, date } = req.body;
+
+//   const giàVisto = await controllaSeGiàVisto(utente, id);
+//   console.log("sono nel controlloGiàVisto", giàVisto)
+
+//   if (giàVisto) {
+//     res.send("Già visto");
+//     return;
+//   }
+
+//   const connection1 = connection.promise()
+//   var sql = "SELECT Type FROM media WHERE imdbID = ?";
+//   await connection1.query(sql, id)
+//     .then(async (risultato) => {
+//       var sql = "INSERT INTO visti SET ?";
+//       await connection1.query(sql, { username: utente, id_film: id, tipo: risultato[0].Type, data_visione: date })
+//         .then(async (results) => {
+//           console.log("inserito");
+//         }).catch((err) => {
+//           console.error('Errore nell\'inserimento dei dati nel database:', err);
+//           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
+//           return;
+//         })
+//     })
+// });
+
 
 
 

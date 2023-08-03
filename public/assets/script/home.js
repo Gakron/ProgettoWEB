@@ -280,7 +280,7 @@ window.onload = () => {
                 const filmTitle = document.createElement("h3");
                 filmTitle.textContent = movie.Title;
 
-                 filmImg.addEventListener("click", async () => {
+                filmImg.addEventListener("click", async () => {
                     await this.getMovieInfo(movie);
                 });
 
@@ -505,7 +505,7 @@ window.onload = () => {
         },
 
         addCommentForm: async function (movie) {
-            console.log("sono su addCommentMovie: ",movie.imdbID);
+            console.log("sono su addCommentMovie: ", movie.imdbID);
             const commentForm = document.querySelector(".comment-form");
 
             const commentInput = document.createElement("input");
@@ -519,11 +519,10 @@ window.onload = () => {
 
             commentForm.appendChild(commentInput);
             commentForm.appendChild(submitCommentButton);
-            submitCommentButton.addEventListener("click", () => {
+            submitCommentButton.addEventListener("click", async () => {
                 const commentText = commentInput.value;
-                
 
-                this.submitComment(movie, commentText);
+                await this.submitComment(movie, commentText);
                 commentInput.value = "";
             });
         },
@@ -532,9 +531,9 @@ window.onload = () => {
             try {
                 const data = this.getCurrentDate();
                 const username = sessionStorage.getItem("username");
-                const id=movie.imdbID
-                console.log("id film: ",id, "username: ", username, "data: ", data);
-                const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: movie.imdbID, comment: commentText, data: data });
+                const id = movie.imdbID
+                console.log("id film: ", id, "username: ", username, "data: ", data);
+                const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: id, comment: commentText, data: data });
                 // Esempio: Mostra un messaggio di successo o effettua altre azioni necessarie
                 console.log('Commento inviato con successo!', response.data);
             } catch (error) {
@@ -544,6 +543,7 @@ window.onload = () => {
         },
 
         getMovieInfo: async function (movie) {
+        
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
@@ -551,7 +551,7 @@ window.onload = () => {
 
 
             const response = await axios.post('http://localhost:3000/api/request-plot', { id, url, username })
-
+            console.log("ultima speranza",response);
             const titleDom = document.querySelector("#movie-info .movie-info-text h2");
             titleDom.innerHTML = movie.Title;
 
@@ -566,23 +566,21 @@ window.onload = () => {
 
             const genreDom = document.querySelector("#movie-info .generi");
             genreDom.innerHTML = "Genre: " + response.data.Genre
-            console.log("prova stampa id",id);
+            console.log("prova stampa id", id);
 
             const bottone = document.querySelector(".visto-button")
-            console.log("data:",response.data);
 
             if (response.data.Seen === true) {
                 bottone.innerHTML = "Seen";
                 bottone.disabled = true;
-                console.log("seconda stampa id", id);
-                this.addCommentForm(movie);
+                await this.addCommentForm(movie);
 
             }
-            else {
-                bottone.innerHTML = "Mark as seen";
-                const commentForm = document.querySelector(".comment-form");
-                commentForm.innerHTML="";
+            else{
+                bottone.innerHTML = "Mark as watched";
+
             }
+           
             const commentsContainer = document.querySelector(".comments-container")
 
             const commenti = await this.recuperaCommenti(id);
@@ -597,7 +595,7 @@ window.onload = () => {
                     const commentoDiv = document.createElement("div");
                     commentoDiv.classList.add("commento");
 
-                    const div_vuoto=document.createElement("div");
+                    const div_vuoto = document.createElement("div");
                     div_vuoto.classList.add("ciao");
                     commentoDiv.appendChild(div_vuoto);
 
@@ -653,18 +651,22 @@ window.onload = () => {
             const id = currentMedia;
             const utente = sessionStorage.username;
             const date = this.getCurrentDate()
-            const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
-            if (response.data === "Già visto") {
-                alert("This is already marked as seen");
+            try {
+                const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
+
+
+                const watchButton = document.querySelector('.visto-button');
+                watchButton.innerHTML = "Seen";
+                watchButton.disabled = true;
+                await this.addCommentForm(currentMedia);
+                window.location.reload();
+
             }
-            const watchButton = document.querySelector('.visto-button');
-            watchButton.innerHTML = "Seen";
-            watchButton.disabled = true;
-
-
-
-
+            catch (error) {
+                console.error('Errore nel segnare il film come visto:', error.message);
+            }
         },
+
 
 
         sectionOpened: "popular",
@@ -797,14 +799,9 @@ window.onload = () => {
 
 
     const seenButton = document.querySelector(".visto-button");
-    seenButton.addEventListener("click", () => {
-        Ricerca.markAsWatched();
-        seenButton.innerHTML = "Seen";
-        seenButton.disabled = true;
 
-        Ricerca.addCommentForm();
-
-
+    seenButton.addEventListener("click", async () => {
+        await Ricerca.markAsWatched();
     })
 
     const logo = document.querySelector(".logo img")
