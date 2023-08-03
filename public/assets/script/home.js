@@ -280,8 +280,8 @@ window.onload = () => {
                 const filmTitle = document.createElement("h3");
                 filmTitle.textContent = movie.Title;
 
-                filmImg.addEventListener("click", () => {
-                    this.getMovieInfo(movie);
+                 filmImg.addEventListener("click", async () => {
+                    await this.getMovieInfo(movie);
                 });
 
                 swiperSlide.appendChild(filmImg);
@@ -345,8 +345,8 @@ window.onload = () => {
                 const serieTitle = document.createElement("h3"); // Creazione del tag <h3>
                 serieTitle.textContent = serie.Title; // Impostazione del testo con il titolo della serie TV
 
-                serieImg.addEventListener("click", () => {
-                    this.getMovieInfo(serie);
+                serieImg.addEventListener("click", async () => {
+                    await this.getMovieInfo(serie);
                 });
 
                 swiperSlide.appendChild(serieImg);
@@ -404,8 +404,8 @@ window.onload = () => {
                 const filmTitle = document.createElement("h3");
                 filmTitle.textContent = movie.Title;
 
-                filmImg.addEventListener("click", () => {
-                    this.getMovieInfo(movie);
+                filmImg.addEventListener("click", async () => {
+                    await this.getMovieInfo(movie);
                 });
 
                 swiperSlide.appendChild(filmImg);
@@ -464,8 +464,8 @@ window.onload = () => {
                 const serieTitle = document.createElement("h3"); // Creazione del tag <h3>
                 serieTitle.textContent = serie.Title; // Impostazione del testo con il titolo della serie TV
 
-                serieImg.addEventListener("click", () => {
-                    this.getMovieInfo(serie);
+                serieImg.addEventListener("click", async () => {
+                    await this.getMovieInfo(serie);
                 });
 
                 swiperSlide.appendChild(serieImg);
@@ -571,9 +571,7 @@ window.onload = () => {
             const bottone = document.querySelector(".visto-button")
             console.log("data:",response.data);
 
-            
             if (response.data.Seen === true) {
-                
                 bottone.innerHTML = "Seen";
                 bottone.disabled = true;
                 console.log("seconda stampa id", id);
