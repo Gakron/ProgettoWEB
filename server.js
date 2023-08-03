@@ -541,7 +541,6 @@ app.post('/api/seen-films', async (req, res) => {
     if (err) throw err;
 
     const filmVistiIds = data.map((row) => row.id_film);
-    console.log(filmVistiIds)
 
     if (filmVistiIds.length === 0) {
 
@@ -549,16 +548,57 @@ app.post('/api/seen-films', async (req, res) => {
       return;
     }
     let secondQuery = "SELECT * FROM media";
-    
+
     if (filmVistiIds.length > 0) {
       secondQuery += " WHERE imdbID IN (?)";
     }
-    
+
     connection.query(secondQuery, [filmVistiIds], async (err, resultsMedia) => {
       if (err) throw err;
-      
+
       res.json({ resultsMedia });
     })
+  })
+})
+
+app.post('/api/submit-comment', async (req, res) => {
+  const { username, id, comment, data } = req.body;
+
+  console.log(username);
+  console.log(id);
+  console.log(comment);
+  console.log(data);
+
+  let query = "INSERT INTO commenti SET ?";
+
+  connection.query(query, { username: username, id_film: id, commento: comment, data_commento: data }, async (err, results) => {
+    if (err) {
+      console.error('Errore nell\'inserimento del commento nel database:', err);
+      res.status(500).json({ error: 'Errore nell\'inserimento del commento nel database' });
+      return;
+    } else {
+      console.log("inserito");
+    }
+
+  })
+})
+
+
+app.post('/api/retrieve-comments', async (req, res) => {
+  const { id } = req.body;
+
+  let query = "SELECT * FROM commenti WHERE id_film=?";
+
+  connection.query(query, [id], async (err, data) => {
+    if (err) throw err;
+    if (data.length > 0) {
+      res.json({ data });
+    }
+    else {
+      res.json({ message: "nessun commento" });
+
+    }
+
   })
 })
 

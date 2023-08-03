@@ -495,11 +495,60 @@ window.onload = () => {
 
         },
 
+        recuperaCommenti: async function (id) {
+            // let query="SELECT * FROM commenti WHERE id_film=?";
+            const response = await axios.post('http://localhost:3000/api/retrieve-comments', { id })
+            const commenti = response.data;
+
+            console.log(commenti)
+            return commenti;
+        },
+
+        addCommentForm: async function (movie) {
+            console.log("sono su addCommentMovie: ",movie.imdbID);
+            const commentForm = document.querySelector(".comment-form");
+
+            const commentInput = document.createElement("input");
+            commentInput.type = "text";
+            commentInput.classList.add("comment-input");
+            commentInput.placeholder = "Inserisci il tuo commento";
+
+            const submitCommentButton = document.createElement("button");
+            submitCommentButton.classList.add("submit-comment-button");
+            submitCommentButton.textContent = "Invia";
+
+            commentForm.appendChild(commentInput);
+            commentForm.appendChild(submitCommentButton);
+            submitCommentButton.addEventListener("click", () => {
+                const commentText = commentInput.value;
+                
+
+                this.submitComment(movie, commentText);
+                commentInput.value = "";
+            });
+        },
+
+        submitComment: async function (movie, commentText) {
+            try {
+                const data = this.getCurrentDate();
+                const username = sessionStorage.getItem("username");
+                const id=movie.imdbID
+                console.log("id film: ",id, "username: ", username, "data: ", data);
+                const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: movie.imdbID, comment: commentText, data: data });
+                // Esempio: Mostra un messaggio di successo o effettua altre azioni necessarie
+                console.log('Commento inviato con successo!', response.data);
+            } catch (error) {
+                // Esempio: Gestisci eventuali errori o mostra un messaggio di errore
+                console.error('Errore durante l\'invio del commento:', error.message);
+            }
+        },
+
         getMovieInfo: async function (movie) {
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
             const username = sessionStorage.getItem("username");
+
 
             const response = await axios.post('http://localhost:3000/api/request-plot', { id, url, username })
 
@@ -516,17 +565,66 @@ window.onload = () => {
             yearDom.innerHTML = "Release date: " + response.data.Released;
 
             const genreDom = document.querySelector("#movie-info .generi");
-            console.log(movie.Genre);
             genreDom.innerHTML = "Genre: " + response.data.Genre
+            console.log("prova stampa id",id);
 
-            console.log(response.data.Seen);
-            const bottone=document.querySelector(".visto-button")
-            if(response.data.Seen){
-                bottone.innerHTML="Seen";
+            const bottone = document.querySelector(".visto-button")
+            console.log("data:",response.data);
+
+            
+            if (response.data.Seen === true) {
+                
+                bottone.innerHTML = "Seen";
                 bottone.disabled = true;
+                console.log("seconda stampa id", id);
+                this.addCommentForm(movie);
+
             }
-            else{
-                bottone.innerHTML="Mark as seen";
+            else {
+                bottone.innerHTML = "Mark as seen";
+                const commentForm = document.querySelector(".comment-form");
+                commentForm.innerHTML="";
+            }
+            const commentsContainer = document.querySelector(".comments-container")
+
+            const commenti = await this.recuperaCommenti(id);
+            commentsContainer.innerHTML = "";
+
+            if (commenti.message === "nessun commento") {
+                commentsContainer.innerHTML = "Ancora nessun commento";
+            }
+            else {
+                commenti.data.forEach((commento) => {
+                    console.log(commento)
+                    const commentoDiv = document.createElement("div");
+                    commentoDiv.classList.add("commento");
+
+                    const div_vuoto=document.createElement("div");
+                    div_vuoto.classList.add("ciao");
+                    commentoDiv.appendChild(div_vuoto);
+
+                    const fotoProfiloImg = document.createElement("img");
+                    fotoProfiloImg.setAttribute("src", "/public/assets/images/profile.svg")
+                    fotoProfiloImg.alt = "Foto profilo";
+                    commentoDiv.appendChild(fotoProfiloImg);
+
+                    const utenteSpan = document.createElement("span");
+                    utenteSpan.classList.add("nome-utente");
+                    utenteSpan.textContent = commento.username;
+                    div_vuoto.appendChild(utenteSpan);
+
+                    const dataSpan = document.createElement("span");
+                    dataSpan.classList.add("data-commento");
+                    dataSpan.textContent = commento.data_commento;
+                    div_vuoto.appendChild(dataSpan);
+
+                    const testoCommento = document.createElement("div");
+                    testoCommento.classList.add("testo-commento");
+                    testoCommento.textContent = commento.commento;
+                    commentoDiv.appendChild(testoCommento);
+
+                    commentsContainer.appendChild(commentoDiv);
+                });
             }
 
             currentMedia = movie.imdbID;
@@ -564,6 +662,8 @@ window.onload = () => {
             const watchButton = document.querySelector('.visto-button');
             watchButton.innerHTML = "Seen";
             watchButton.disabled = true;
+
+
 
 
         },
@@ -701,8 +801,12 @@ window.onload = () => {
     const seenButton = document.querySelector(".visto-button");
     seenButton.addEventListener("click", () => {
         Ricerca.markAsWatched();
-        seenButton.innerHTML="Seen";
-        seenButton.disabled=true;
+        seenButton.innerHTML = "Seen";
+        seenButton.disabled = true;
+
+        Ricerca.addCommentForm();
+
+
     })
 
     const logo = document.querySelector(".logo img")
