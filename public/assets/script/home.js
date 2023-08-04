@@ -12,7 +12,7 @@ let currentPositionSerie = 0;
 
 let ultimaRicerca;
 let currentMedia; //occhio che salva l'id, non il titolo
-
+let ultimoMovie;
 
 
 
@@ -505,7 +505,7 @@ window.onload = () => {
         },
 
         addCommentForm: async function (movie) {
-            console.log("sono su addCommentMovie: ", movie.imdbID);
+            console.log("sono su addCommentMovie: ", currentMedia);
             const commentForm = document.querySelector(".comment-form");
 
             const commentInput = document.createElement("input");
@@ -520,41 +520,43 @@ window.onload = () => {
             commentForm.appendChild(commentInput);
             commentForm.appendChild(submitCommentButton);
 
-            
+
 
 
             submitCommentButton.addEventListener("click", async () => {
                 const commentText = commentInput.value;
-
-                await this.submitComment(movie, commentText);
+                await this.submitComment(currentMedia, commentText);
                 commentInput.value = "";
-                                await this.getMovieInfo(movie);
+                
+                await this.getMovieInfo(movie);
 
             });
         },
 
-        
+
 
         submitComment: async function (movie, commentText) {
             try {
+                console.log("QUESTO MI INTERESSA: ", ultimoMovie)
                 const data = this.getCurrentDate();
                 const username = sessionStorage.getItem("username");
-                const id = movie.imdbID;
+                const id = movie;
                 console.log("id film: ", id, "username: ", username, "data: ", data);
                 const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: id, comment: commentText, data: data });
                 console.log(response);
-                this.getMovieInfo(movie);
+
+                 this.getMovieInfo(ultimoMovie);
             } catch (error) {
                 // Esempio: Gestisci eventuali errori o mostra un messaggio di errore
                 console.error('Errore durante l\'invio del commento:', error.message);
             }
-            //  this.getMovieInfo(movie);
 
 
         },
 
         getMovieInfo: async function (movie) {
-
+            console.log(movie);
+            ultimoMovie = movie;
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
@@ -584,8 +586,8 @@ window.onload = () => {
             if (response.data.Seen === true) {
                 bottone.innerHTML = "Seen";
                 bottone.disabled = true;
-                const form=document.querySelector(".comment-input");
-                if(!form){
+                const form = document.querySelector(".comment-input");
+                if (!form) {
                     await this.addCommentForm(movie);
                 }
 
@@ -675,7 +677,6 @@ window.onload = () => {
                 watchButton.innerHTML = "Seen";
                 watchButton.disabled = true;
                 await this.addCommentForm(currentMedia);
-                // await this.getMovieInfo(id)
             }
             catch (error) {
                 console.error('Errore nel segnare il film come visto:', error.message);

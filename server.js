@@ -362,13 +362,10 @@ app.post('/api/request-plot', async (req, res) => {
   let query = "SELECT * FROM media WHERE imdbID = ?";
 
   await connection1.query(query, [id]).then(async (results) => {
-    console.log("risultati query", results);
-
+    console.log(results);
     if (results[0][0].Plot) {
-      console.log("ho il plot");
       let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
       await connection1.query(query, [username, id]).then(async (results2) => {
-        console.log("risultati query annidata", results2);
         if (results2[0].length > 0) {
           const body = {
             Genre: results[0][0].Genre,
@@ -397,7 +394,6 @@ app.post('/api/request-plot', async (req, res) => {
           })
         }
       })
-
     }
     else {
       console.log("non ho il plot, quindi non posso aver visto il film");
@@ -415,12 +411,13 @@ app.post('/api/request-plot', async (req, res) => {
 
         res.json(body);
       }).catch((err) => {
-        console.error('Errore nel caso in cui ho il plot', error);
+        console.error('Errore nel caso in cui ho il plot', err);
         res.status(500).json({ error: 'Errore nel caso in cui ho il plot' });
       })
     }
+
   }).catch((err) => {
-    console.error('Errore nel caso in cui ho il plot', error);
+    console.error('Errore nel caso in cui ho il plot', err);
     res.status(500).json({ error: 'Errore nel caso in cui ho il plot' });
   })
 })
@@ -557,7 +554,6 @@ app.post('/api/seen-films', async (req, res) => {
       return;
     }
     let secondQuery = "SELECT * FROM media";
-
     if (filmVistiIds.length > 0) {
       secondQuery += " WHERE imdbID IN (?)";
     }
@@ -574,14 +570,14 @@ app.post('/api/submit-comment', async (req, res) => {
   const { username, id, comment, data } = req.body;
 
   let query = "INSERT INTO commenti SET ?";
-
   connection.query(query, { username: username, id_film: id, commento: comment, data_commento: data }, async (err, results) => {
     if (err) {
       console.error('Errore nell\'inserimento del commento nel database:', err);
       res.status(500).json({ error: 'Errore nell\'inserimento del commento nel database' });
       return;
     } else {
-      res.json({ message: "inserito" });    }
+      res.json({ message: "inserito" });
+    }
 
   })
 })
