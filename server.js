@@ -362,7 +362,6 @@ app.post('/api/request-plot', async (req, res) => {
   let query = "SELECT * FROM media WHERE imdbID = ?";
 
   await connection1.query(query, [id]).then(async (results) => {
-    console.log(results);
     if (results[0][0].Plot) {
       let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
       await connection1.query(query, [username, id]).then(async (results2) => {
