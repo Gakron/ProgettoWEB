@@ -5,26 +5,27 @@
   font-family: 'Roboto', sans-serif;
 }
 
+/*004225    0a492e*/
 body {
-  background: rgb(127, 134, 136);
-  background: linear-gradient(0deg, rgba(127, 134, 136, 1) 0%, rgba(146, 157, 158, 1) 99%);
+  background: #588157;
   min-height: 100vh;
 }
 
 
 
 header {
+  background-color: #344E41;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: #333 2px solid;
-  box-shadow: 5px 2px 4px 1px #33333399;
+  border-bottom: #775B59 2px solid;
+  box-shadow: 5px 2px 4px 1px #775B59;
 }
 
 .logo img {
   margin: 15px 0px 10px 15px;
-  width: 200px;
-  height: 100%;
+  width: 220px;
+  height: 55px;
   cursor: pointer;
 }
 
@@ -96,12 +97,13 @@ main {
 }
 
 .comment-count {
+  background-color: #A3B18A;
   font-size: 14px;
-  border: 1px solid #333;
+  border: 1px solid #775B59;
   padding: 5px 10px;
   border-radius: 5px;
   margin-right: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px #775B59;
 
 
 }
@@ -129,12 +131,12 @@ main {
   justify-content: center;
   padding: 10px;
   text-align: center;
-  flex: 0 0 calc(25% - 10px);
+  flex: 0 0 calc(33% - 10px);
   margin: 5px;
-  border: 1px solid #333;
+  border: 1px solid #775B59;
   border-radius: 5px;
-  background-color: transparent;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #A3B18A;
+  box-shadow: 0 2px 5px #775B59;
 }
 
 @media (max-width: 600px) {
@@ -182,7 +184,7 @@ main {
   height: 40px;
   position: absolute;
   border-radius: 200px 200px 200px 200px;
-  background-color: #333;
+  background-color: #50514F;
   color: #fff;
   font-size: 16px;
   cursor: pointer;

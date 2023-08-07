@@ -7,15 +7,12 @@
 
 
 body {
-  /* background: rgb(255, 254, 255);
-  background: linear-gradient(90deg, rgba(255, 254, 255, 1) 0%, rgba(51, 80, 45, 0.9) 0%, rgba(35, 71, 34, 0.9) 100%); */
-
-  background: rgb(127, 134, 136);
-  background: linear-gradient(0deg, rgba(127, 134, 136, 1) 0%, rgba(146, 157, 158, 1) 99%);
+    background: #588157;
   min-height: 100vh;
 }
 
 header {
+  background-color: #344E41;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -25,8 +22,9 @@ header {
 
 .logo img {
   margin: 15px 0px 10px 15px;
-  width: 200px;
-  height: 100%;
+  width: 220px;
+  height: 55px;
+  cursor: pointer;
 }
 
 .login-signup {
@@ -38,8 +36,8 @@ header {
   margin: 10px;
   margin-right:50px;
   padding: 8px 16px;
-  background-color: #06740c;
-  color: white;
+  background-color: #A3B18A;
+  color: black;
   border: none;
   border-radius: 4px;
   font-size: 18px;
@@ -92,7 +90,7 @@ header {
 .icon-item img {
   width: 48px;
   height: 48px;
-  background-color: #06740c;
+  background-color: #A3B18A;
   border-radius: 200px 200px 200px 200px;
 }
 
