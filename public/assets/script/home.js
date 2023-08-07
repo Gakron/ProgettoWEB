@@ -527,7 +527,7 @@ window.onload = () => {
                 const commentText = commentInput.value;
                 await this.submitComment(currentMedia, commentText);
                 commentInput.value = "";
-                
+
                 await this.getMovieInfo(movie);
 
             });
@@ -537,19 +537,26 @@ window.onload = () => {
 
         submitComment: async function (movie, commentText) {
             try {
-                console.log("QUESTO MI INTERESSA: ", ultimoMovie)
                 const data = this.getCurrentDate();
                 const username = sessionStorage.getItem("username");
                 const id = movie;
                 console.log("id film: ", id, "username: ", username, "data: ", data);
                 const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: id, comment: commentText, data: data });
-                console.log(response);
 
-                 this.getMovieInfo(ultimoMovie);
+                this.getMovieInfo(ultimoMovie);
             } catch (error) {
                 // Esempio: Gestisci eventuali errori o mostra un messaggio di errore
                 console.error('Errore durante l\'invio del commento:', error.message);
             }
+
+
+        },
+
+        redirectProfiloUtente: async function (username) {
+            console.log("ciao", username);
+            // this.changeSection("loader");
+            const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+            window.location.href = url;
 
 
         },
@@ -607,7 +614,6 @@ window.onload = () => {
             }
             else {
                 commenti.data.reverse().forEach((commento) => {
-                    console.log(commento)
                     const commentoDiv = document.createElement("div");
                     commentoDiv.classList.add("commento");
 
@@ -623,6 +629,9 @@ window.onload = () => {
                     const utenteSpan = document.createElement("span");
                     utenteSpan.classList.add("nome-utente");
                     utenteSpan.textContent = commento.username;
+                    utenteSpan.addEventListener("click", () => {
+                        this.redirectProfiloUtente(commento.username)
+                    });
                     div_vuoto.appendChild(utenteSpan);
 
                     const dataSpan = document.createElement("span");
@@ -655,7 +664,7 @@ window.onload = () => {
         },
 
         getCurrentDate: function () {
-            const today = new Date();
+            const today = new Date(); this.submitComment
             const day = String(today.getDate()).padStart(2, '0');
             const month = String(today.getMonth() + 1).padStart(2, '0'); // Mese è zero-based (0 per gennaio, 11 per dicembre), quindi aggiungo 1
             const year = today.getFullYear();
@@ -806,11 +815,18 @@ window.onload = () => {
 
     const profile = document.querySelector(".profile");
     profile.addEventListener("click", () => {
-        window.location.assign("/public/pages/profile.html")
+        Ricerca.changeSection("loader");
+        const username= sessionStorage.getItem("username");
+        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        window.location.href = url;
     })
+
     const profile_txt = document.querySelector(".profile-box span");
     profile_txt.addEventListener("click", () => {
-        window.location.assign("/public/pages/profile.html")
+        Ricerca.changeSection("loader");
+        const username= sessionStorage.getItem("username");
+        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        window.location.href = url;
     })
 
 

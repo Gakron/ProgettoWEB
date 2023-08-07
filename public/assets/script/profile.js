@@ -11,7 +11,8 @@ window.onload = () => {
 
 
     const profile_name = document.querySelector(".username");
-    const username = sessionStorage.getItem("username");
+    const urlParams = new URLSearchParams(window.location.search);
+    const username = urlParams.get('user');
     profile_name.innerHTML = username;
 
 
@@ -184,3 +185,16 @@ function convertiMinutiInOre(minuti) {
     return `${ore}h ${minutiRimasti}min`;
 }
 
+const profile = document.querySelector(".profile");
+    profile.addEventListener("click", () => {
+        const username= sessionStorage.getItem("username");
+        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        window.location.href = url;
+    })
+
+    const profile_txt = document.querySelector(".profile-box span");
+    profile_txt.addEventListener("click", () => {
+        const username= sessionStorage.getItem("username");
+        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        window.location.href = url;
+    })

@@ -478,6 +478,7 @@ header {
 
 .commento .nome-utente {
     font-weight: bold;
+    cursor: pointer;
 }
 
 .commento .data-commento {
