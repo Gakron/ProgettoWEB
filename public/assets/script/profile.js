@@ -16,7 +16,156 @@ window.onload = () => {
     profile_name.innerHTML = username;
 
 
+    const usernameAttuale = localStorage.getItem("username");
+    const bottoneFollow = document.querySelector(".follow-button");
+    const bottoneUnfollow = document.querySelector(".unfollow-button");
 
+    bottoneFollow.addEventListener("click", () => { followRequest() });
+    bottoneUnfollow.addEventListener("click", () => { unfollowRequest() });
+
+
+    const followers_text = document.querySelector(".followers-text");
+    const following_text = document.querySelector(".following-text");
+
+    followers_text.addEventListener("click", () => { showFollowers() });
+    following_text.addEventListener("click", () => { showFollowings() });
+
+
+    const profile = document.querySelector(".profile");
+    profile.addEventListener("click", () => {
+        const username = localStorage.getItem("username");
+        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        window.location.href = url;
+    })
+
+    const profile_txt = document.querySelector(".profile-box span");
+    profile_txt.addEventListener("click", () => {
+        const username = localStorage.getItem("username");
+        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        window.location.href = url;
+    })
+
+
+    async function showFollowers() {
+        const followersListUL = document.getElementById('followers-list-ul');
+        if (followersListUL.innerHTML === "") {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('user');
+            try {
+                const followersRaw = await axios.post('http://localhost:3000/api/show-followers', { username })
+
+                followersListUL.innerHTML = '';
+
+                followersRaw.data.results[0].forEach(follower => {
+                    const followerLi = document.createElement('li');
+                    followerLi.textContent = follower.username_seguiti;
+                    followerLi.addEventListener("click", () => {
+                        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(follower.username_seguiti)}`;
+                        window.location.href = url;
+                        followersListUL.innerHTML = '';
+                    })
+                    followersListUL.appendChild(followerLi);
+                });
+            } catch (error) {
+                console.error("Si è verificato un errore durante la richiesta:", error);
+            }
+        }
+        else{
+            followersListUL.innerHTML="";
+        }
+    }
+
+    async function showFollowings() {
+        const followingListUL = document.getElementById('following-list-ul');
+        if (followingListUL.innerHTML === "") {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('user');
+            try {
+
+
+                const followingRaw = await axios.post('http://localhost:3000/api/show-followings', { username })
+
+                followingRaw.innerHTML = '';
+
+                followingRaw.data.results[0].forEach(following => {
+                    const followingLi = document.createElement('li');
+                    followingLi.textContent = following.username;
+                    followingLi.addEventListener("click", () => {
+                        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(following.username)}`;
+                        window.location.href = url;
+                        followingLi.innerHTML = '';
+
+                    })
+                    
+                    followingListUL.appendChild(followingLi);
+                });
+            } catch (error) {
+                console.error("Si è verificato un errore durante la richiesta:", error);
+            }
+        }
+        else{
+            followingListUL.innerHTML="";
+        }
+    }
+
+    async function followRequest() {
+        const response = await axios.post('http://localhost:3000/api/follow-request', { usernameAttuale, username })
+        console.log("risposta del follow", response)
+        if (response.data.message === 'Follow effettuato con successo') {
+            bottoneFollow.classList.add("hidden");
+            bottoneUnfollow.classList.remove("hidden");
+        }
+    }
+
+    async function unfollowRequest() {
+        const response = await axios.post('http://localhost:3000/api/unfollow-request', { usernameAttuale, username })
+        console.log("risposta dell'unfollow", response)
+
+        if (response.data.message === 'unfollow effettuato con successo') {
+            bottoneUnfollow.classList.add("hidden");
+            bottoneFollow.classList.remove("hidden");
+        }
+    }
+
+    async function alreadyFollow() {
+        const response = await axios.post('http://localhost:3000/api/already-following', { usernameAttuale, username })
+        console.log("seguo già?: ", response.data.alreadyFollowing);
+        if (username === usernameAttuale) {
+            bottoneFollow.classList.add("hidden");
+            return;
+        } else if (response.data.alreadyFollowing === true) {
+            bottoneFollow.classList.add("hidden");
+            bottoneUnfollow.classList.remove("hidden");
+        }
+        else {
+            bottoneUnfollow.classList.add("hidden");
+            bottoneFollow.classList.remove("hidden");
+        }
+    }
+
+    async function followersUtente(username) {
+        try {
+            const response = await axios.post('http://localhost:3000/api/get-followers', { username })
+
+            const followers = document.querySelector(".followers-text");
+            followers.innerHTML = response.data.length + " followers";
+
+        } catch (error) {
+            console.error("Si è verificato un errore durante la richiesta:", error);
+        }
+    }
+
+    async function followingUtente(username) {
+        try {
+            const response = await axios.post('http://localhost:3000/api/get-following', { username })
+
+            const following = document.querySelector(".following-text");
+
+            following.innerHTML = response.data.length + " following";
+        } catch (error) {
+            console.error("Si è verificato un errore durante la richiesta:", error);
+        }
+    }
 
     async function trovaFilmVisti(username) {
         try {
@@ -65,8 +214,8 @@ window.onload = () => {
 
         const response = await axios.post("http://localhost:3000/api/seen-films", { username })
         const risposta = response.data.resultsMedia;
-        if(response.data.message==="nessun risultato"){
-            filmWrapper.innerHTML="Nessun film visto";
+        if (response.data.message === "nessun risultato") {
+            filmWrapper.innerHTML = "Nessun film visto";
             return;
         }
         for (let i = risposta.length - 1; i >= 0; i--) {
@@ -125,8 +274,8 @@ window.onload = () => {
         const response = await axios.post("http://localhost:3000/api/seen-films", { username })
         const risposta = response.data.resultsMedia;
 
-        if(response.data.message==="nessun risultato"){
-            serieWrapper.innerHTML="Nessuna serie vista";
+        if (response.data.message === "nessun risultato") {
+            serieWrapper.innerHTML = "Nessuna serie vista";
             return;
         }
 
@@ -170,13 +319,17 @@ window.onload = () => {
         }
     }
 
-    
+
 
 
     generateFilmSlides(username);
     generateSerieSlides(username);
     trovaFilmVisti(username);
     commentiUtente(username);
+    alreadyFollow();
+    followersUtente(username);
+    followingUtente(username);
+
 }
 
 function convertiMinutiInOre(minuti) {
@@ -185,16 +338,3 @@ function convertiMinutiInOre(minuti) {
     return `${ore}h ${minutiRimasti}min`;
 }
 
-const profile = document.querySelector(".profile");
-    profile.addEventListener("click", () => {
-        const username= sessionStorage.getItem("username");
-        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
-        window.location.href = url;
-    })
-
-    const profile_txt = document.querySelector(".profile-box span");
-    profile_txt.addEventListener("click", () => {
-        const username= sessionStorage.getItem("username");
-        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
-        window.location.href = url;
-    })

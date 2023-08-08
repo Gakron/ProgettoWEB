@@ -538,7 +538,7 @@ window.onload = () => {
         submitComment: async function (movie, commentText) {
             try {
                 const data = this.getCurrentDate();
-                const username = sessionStorage.getItem("username");
+                const username = localStorage.getItem("username");
                 const id = movie;
                 console.log("id film: ", id, "username: ", username, "data: ", data);
                 const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: id, comment: commentText, data: data });
@@ -567,7 +567,7 @@ window.onload = () => {
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
-            const username = sessionStorage.getItem("username");
+            const username = localStorage.getItem("username");
 
 
             const response = await axios.post('http://localhost:3000/api/request-plot', { id, url, username })
@@ -674,7 +674,7 @@ window.onload = () => {
 
         markAsWatched: async function () {
             const id = currentMedia;
-            const utente = sessionStorage.username;
+            const utente = localStorage.getItem("username");
             const date = this.getCurrentDate()
             console.log("questo è l'id:", id);
             console.log("questo è currentMedia: ", currentMedia);
@@ -816,7 +816,7 @@ window.onload = () => {
     const profile = document.querySelector(".profile");
     profile.addEventListener("click", () => {
         Ricerca.changeSection("loader");
-        const username= sessionStorage.getItem("username");
+        const username= localStorage.getItem("username");
         const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })
@@ -824,7 +824,7 @@ window.onload = () => {
     const profile_txt = document.querySelector(".profile-box span");
     profile_txt.addEventListener("click", () => {
         Ricerca.changeSection("loader");
-        const username= sessionStorage.getItem("username");
+        const username= localStorage.getItem("username");
         const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })

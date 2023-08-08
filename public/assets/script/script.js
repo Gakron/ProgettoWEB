@@ -64,8 +64,9 @@ const login = () =>
     }).then(res => {
         if (res.ok && res.status == 200) {
             const username = document.getElementById("lgn_email").value;
-            sessionStorage.setItem('username', username);
-            window.location.assign("/public/pages/home.html");
+            localStorage.clear();
+            localStorage.setItem('username', username);
+            window.location.assign("http://localhost:5501/public/pages/home.html");
         }
 
         else

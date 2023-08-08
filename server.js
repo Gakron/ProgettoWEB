@@ -426,7 +426,6 @@ async function controllaSeGiàVisto(utente, id) {
   const connection1 = connection.promise();
   try {
     const results = await connection1.query("SELECT * FROM visti WHERE username = ? AND id_film = ?", [utente, id]);
-    console.log(results[0].length);
     return results[0].length;
   } catch (err) {
     console.error('Errore nella verifica dei dati nel database:', err);
@@ -600,6 +599,109 @@ app.post('/api/retrieve-comments', async (req, res) => {
   })
 })
 
+app.post('/api/follow-request', async (req, res) => {
+  const { usernameAttuale, username } = req.body;
+  const connection1 = connection.promise();
+  const sql = 'INSERT INTO seguiti (username, username_seguiti) VALUES (?, ?)';
+
+  await connection1.query(sql, [usernameAttuale, username])
+    .then(async (results) => {
+      res.status(200).json({ message: 'Follow effettuato con successo' });
+    }).catch((err) => {
+      console.error('Errore durante il follow', err);
+      res.status(500).json({ error: 'Errore durante il follow' });
+    })
+})
+
+
+app.post('/api/unfollow-request', async (req, res) => {
+  const { usernameAttuale, username } = req.body;
+  const connection1 = connection.promise();
+  const sql = 'DELETE FROM seguiti WHERE username = ? AND username_seguiti = ?';
+
+  await connection1.query(sql, [usernameAttuale, username])
+    .then(async (results) => {
+      res.status(200).json({ message: 'unfollow effettuato con successo' });
+    }).catch((err) => {
+      console.error('Errore durante unfollow', err);
+      res.status(500).json({ error: 'Errore durante unfollow' });
+    })
+})
+
+app.post('/api/already-following', async (req, res) => {
+  const { usernameAttuale, username } = req.body;
+  const connection1 = connection.promise();
+  const sql = 'SELECT * FROM seguiti seguiti WHERE username = ? AND username_seguiti = ?';
+  await connection1.query(sql, [usernameAttuale, username])
+    .then(async (results) => {
+      if (results[0].length > 0) {
+        res.json({ alreadyFollowing: true });
+      } else {
+        res.json({ alreadyFollowing: false });
+      }
+    }).catch((err) => {
+      console.error('Errore durante unfollow', err);
+      res.status(500).json({ error: 'Errore durante unfollow' });
+    })
+
+})
+
+
+app.post("/api/get-followers", async (req, res)=>{
+  const {username } = req.body;
+
+  const connection1 = connection.promise();
+  const sql = 'SELECT * FROM seguiti seguiti WHERE username = ?';
+  await connection1.query(sql, [username])
+  .then((results)=>{
+    res.json({ length: results[0].length });
+  }).catch((err) => {
+    console.error('Errore durante il recupero dei followers', err);
+    res.status(500).json({ error: 'Errore durante il recupero dei followers' });
+  })
+})
+
+app.post("/api/show-followers", async (req, res)=>{
+  const {username} = req.body;
+  const connection1 = connection.promise();
+  const sql = 'SELECT * FROM seguiti WHERE username = ?';
+  await connection1.query(sql, [username])
+  .then((results)=>{
+    res.json({results:results});
+  }).catch((err) => {
+    console.error('Errore durante il recupero dei followers', err);
+    res.status(500).json({ error: 'Errore durante il recupero dei followers' });
+  })
+})
+
+
+app.post("/api/show-followings", async (req, res)=>{
+  const {username} = req.body;
+  const connection1 = connection.promise();
+  const sql = 'SELECT * FROM seguiti WHERE username_seguiti = ?';
+  await connection1.query(sql, [username])
+  .then((results)=>{
+    res.json({results:results});
+  }).catch((err) => {
+    console.error('Errore durante il recupero dei followers', err);
+    res.status(500).json({ error: 'Errore durante il recupero dei followers' });
+  })
+})
+
+
+app.post("/api/get-following", async (req, res)=>{
+  const {username } = req.body;
+
+  const connection1 = connection.promise();
+  const sql = 'SELECT * FROM seguiti seguiti WHERE username_seguiti = ?';
+  await connection1.query(sql, [username])
+  .then((results)=>{
+    res.json({ length: results[0].length });
+  }).catch((err) => {
+    console.error('Errore durante il recupero dei seguiti', err);
+    res.status(500).json({ error: 'Errore durante il recupero dei seguiti' });
+  })
+})
 
 app.listen(3000, () => {
   console.log("In ascolto sulla porta 3000");
