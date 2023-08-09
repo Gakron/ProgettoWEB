@@ -12,7 +12,7 @@ let currentPositionSerie = 0;
 
 let ultimaRicerca;
 let currentMedia; //occhio che salva l'id, non il titolo
-let ultimoMovie;
+let ultimoMovie;  //salva tutto il film
 
 
 
@@ -505,8 +505,15 @@ window.onload = () => {
         },
 
         addCommentForm: async function (movie) {
-            console.log("sono su addCommentMovie: ", currentMedia);
+            currentMedia = movie.imdbID;
+
+            console.log("sono su addCommentMovie: ", movie);
             const commentForm = document.querySelector(".comment-form");
+            const commentInputElimina = document.querySelector(".comment-input");
+            const submitCommentButtonElimina = document.querySelector(".submit-comment-button");
+            if(commentInputElimina && submitCommentButtonElimina){
+                return;
+            }
 
             const commentInput = document.createElement("input");
             commentInput.type = "text";
@@ -522,13 +529,13 @@ window.onload = () => {
 
 
 
-
             submitCommentButton.addEventListener("click", async () => {
                 const commentText = commentInput.value;
+                console.log("QUI SOONO NEL SUBMIT COMMENT MOVIE:", currentMedia)
                 await this.submitComment(currentMedia, commentText);
                 commentInput.value = "";
-
-                await this.getMovieInfo(movie);
+                console.log("ULTIMO MOVIE: ",ultimoMovie)
+                await this.getMovieInfo(ultimoMovie);
 
             });
         },
@@ -537,13 +544,15 @@ window.onload = () => {
 
         submitComment: async function (movie, commentText) {
             try {
+                console.log("BBBBBBBB",currentMedia);
+                
+
                 const data = this.getCurrentDate();
                 const username = localStorage.getItem("username");
                 const id = movie;
                 console.log("id film: ", id, "username: ", username, "data: ", data);
-                const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: id, comment: commentText, data: data });
-
-                this.getMovieInfo(ultimoMovie);
+                const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: currentMedia, comment: commentText, data: data });
+                await this.getMovieInfo(ultimoMovie);
             } catch (error) {
                 // Esempio: Gestisci eventuali errori o mostra un messaggio di errore
                 console.error('Errore durante l\'invio del commento:', error.message);
@@ -562,8 +571,11 @@ window.onload = () => {
         },
 
         getMovieInfo: async function (movie) {
-            console.log(movie);
+            // const form = document.querySelector(".comment-input");
+            // if(form)    form.innerHTML = "";
             ultimoMovie = movie;
+            currentMedia = movie.imdbID;
+
             this.changeSection("loader");
             const url = this.getHost();
             const id = movie.imdbID;
@@ -571,7 +583,6 @@ window.onload = () => {
 
 
             const response = await axios.post('http://localhost:3000/api/request-plot', { id, url, username })
-            console.log("ultima speranza", response);
             const titleDom = document.querySelector("#movie-info .movie-info-text h2");
             titleDom.innerHTML = movie.Title;
 
@@ -591,12 +602,9 @@ window.onload = () => {
             const bottone = document.querySelector(".visto-button")
 
             if (response.data.Seen === true) {
-                bottone.innerHTML = "Seen";
-                bottone.disabled = true;
-                const form = document.querySelector(".comment-input");
-                if (!form) {
-                    await this.addCommentForm(movie);
-                }
+                bottone.textContent = "Seen";
+
+                await this.addCommentForm(movie);
 
             }
             else {
@@ -664,7 +672,7 @@ window.onload = () => {
         },
 
         getCurrentDate: function () {
-            const today = new Date(); this.submitComment
+            const today = new Date();
             const day = String(today.getDate()).padStart(2, '0');
             const month = String(today.getMonth() + 1).padStart(2, '0'); // Mese è zero-based (0 per gennaio, 11 per dicembre), quindi aggiungo 1
             const year = today.getFullYear();
@@ -681,11 +689,10 @@ window.onload = () => {
             try {
                 const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
 
-
                 const watchButton = document.querySelector('.visto-button');
                 watchButton.innerHTML = "Seen";
-                watchButton.disabled = true;
                 await this.addCommentForm(currentMedia);
+                await this.getMovieInfo(ultimoMovie)
             }
             catch (error) {
                 console.error('Errore nel segnare il film come visto:', error.message);
@@ -816,7 +823,7 @@ window.onload = () => {
     const profile = document.querySelector(".profile");
     profile.addEventListener("click", () => {
         Ricerca.changeSection("loader");
-        const username= localStorage.getItem("username");
+        const username = localStorage.getItem("username");
         const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })
@@ -824,7 +831,7 @@ window.onload = () => {
     const profile_txt = document.querySelector(".profile-box span");
     profile_txt.addEventListener("click", () => {
         Ricerca.changeSection("loader");
-        const username= localStorage.getItem("username");
+        const username = localStorage.getItem("username");
         const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })

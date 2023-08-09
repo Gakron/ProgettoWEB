@@ -362,9 +362,11 @@ app.post('/api/request-plot', async (req, res) => {
   let query = "SELECT * FROM media WHERE imdbID = ?";
 
   await connection1.query(query, [id]).then(async (results) => {
-    if (results[0][0].Plot) {
+    console.log(results[0][0].Plot);
+    if (results[0][0].Plot !== null) {
       let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
       await connection1.query(query, [username, id]).then(async (results2) => {
+        console.log("risposta2: ", results2)
         if (results2[0].length > 0) {
           const body = {
             Genre: results[0][0].Genre,
@@ -373,24 +375,21 @@ app.post('/api/request-plot', async (req, res) => {
             Released: results[0][0].Released,
             Seen: true
           }
+          console.log("body nel caso in cui l'ho visto: ", body)
           res.json(body);
         }
         else {
           console.log("ho il plot, ma non ho visto il film");
-          const response = await axios.get(url + "i=" + id + "&plot=full&");
-          var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
-          const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
-          await connection1.query(sql, data).then((results3) => {
-            const body = {
-              Runtime: data[0],
-              Genre: data[1],
-              Plot: data[2],
-              Released: data[3],
-              Seen: false
-            }
+          const body = {
+            Genre: results[0][0].Genre,
+            Runtime: results[0][0].Runtime,
+            Plot: results[0][0].Plot,
+            Released: results[0][0].Released,
+            Seen: false
+          }
+          console.log("body nel caso in cui non l'ho visto: ", body)
 
-            res.json(body);
-          })
+          res.json(body);
         }
       })
     }
@@ -400,6 +399,8 @@ app.post('/api/request-plot', async (req, res) => {
       var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
       const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
       await connection1.query(sql, data).then((results3) => {
+        console.log("response 3 caso: ",response);
+        console.log("response abbreviata: ",data);
         const body = {
           Runtime: data[0],
           Genre: data[1],
@@ -407,8 +408,9 @@ app.post('/api/request-plot', async (req, res) => {
           Released: data[3],
           Seen: false
         }
-
+        console.log("body terzo caso: ",body);
         res.json(body);
+
       }).catch((err) => {
         console.error('Errore nel caso in cui ho il plot', err);
         res.status(500).json({ error: 'Errore nel caso in cui ho il plot' });
@@ -426,6 +428,8 @@ async function controllaSeGiàVisto(utente, id) {
   const connection1 = connection.promise();
   try {
     const results = await connection1.query("SELECT * FROM visti WHERE username = ? AND id_film = ?", [utente, id]);
+    console.log("reuslt già visto: ", results)
+    console.log("reuslt.lenght già visto: ", results[0].length)
     return results[0].length;
   } catch (err) {
     console.error('Errore nella verifica dei dati nel database:', err);
@@ -436,26 +440,23 @@ async function controllaSeGiàVisto(utente, id) {
 
 app.post('/api/mark-as-watched', async (req, res) => {
   const { id, utente, date } = req.body;
+  console.log("id: ", id," Utente: ", utente, " date: ", date)
 
   try {
     // Controlla se il film è già stato segnato come visto dall'utente
     const giàVisto = await controllaSeGiàVisto(utente, id);
     console.log("sono nel controlloGiàVisto", giàVisto);
-
-    if (giàVisto) {
+    console.log(giàVisto)
+    if (giàVisto===1) {
       res.send("Già visto");
       return;
     }
-
     const connection1 = connection.promise();
-    // Recupera il tipo di film dalla tabella 'media'
-    const risultato = await connection1.query("SELECT Type FROM media WHERE imdbID = ?", id);
-
+   
     // Inserisce la nuova voce nella tabella 'visti'
     const insertResult = await connection1.query("INSERT INTO visti SET ?", {
       username: utente,
       id_film: id,
-      tipo: risultato[0].Type,
       data_visione: date
     });
 
@@ -566,7 +567,7 @@ app.post('/api/seen-films', async (req, res) => {
 
 app.post('/api/submit-comment', async (req, res) => {
   const { username, id, comment, data } = req.body;
-
+console.log(username, id,comment,data)
   let query = "INSERT INTO commenti SET ?";
   connection.query(query, { username: username, id_film: id, commento: comment, data_commento: data }, async (err, results) => {
     if (err) {
@@ -647,60 +648,60 @@ app.post('/api/already-following', async (req, res) => {
 })
 
 
-app.post("/api/get-followers", async (req, res)=>{
-  const {username } = req.body;
+app.post("/api/get-followers", async (req, res) => {
+  const { username } = req.body;
 
   const connection1 = connection.promise();
   const sql = 'SELECT * FROM seguiti seguiti WHERE username = ?';
   await connection1.query(sql, [username])
-  .then((results)=>{
-    res.json({ length: results[0].length });
-  }).catch((err) => {
-    console.error('Errore durante il recupero dei followers', err);
-    res.status(500).json({ error: 'Errore durante il recupero dei followers' });
-  })
+    .then((results) => {
+      res.json({ length: results[0].length });
+    }).catch((err) => {
+      console.error('Errore durante il recupero dei followers', err);
+      res.status(500).json({ error: 'Errore durante il recupero dei followers' });
+    })
 })
 
-app.post("/api/show-followers", async (req, res)=>{
-  const {username} = req.body;
+app.post("/api/show-followers", async (req, res) => {
+  const { username } = req.body;
   const connection1 = connection.promise();
   const sql = 'SELECT * FROM seguiti WHERE username = ?';
   await connection1.query(sql, [username])
-  .then((results)=>{
-    res.json({results:results});
-  }).catch((err) => {
-    console.error('Errore durante il recupero dei followers', err);
-    res.status(500).json({ error: 'Errore durante il recupero dei followers' });
-  })
+    .then((results) => {
+      res.json({ results: results });
+    }).catch((err) => {
+      console.error('Errore durante il recupero dei followers', err);
+      res.status(500).json({ error: 'Errore durante il recupero dei followers' });
+    })
 })
 
 
-app.post("/api/show-followings", async (req, res)=>{
-  const {username} = req.body;
+app.post("/api/show-followings", async (req, res) => {
+  const { username } = req.body;
   const connection1 = connection.promise();
   const sql = 'SELECT * FROM seguiti WHERE username_seguiti = ?';
   await connection1.query(sql, [username])
-  .then((results)=>{
-    res.json({results:results});
-  }).catch((err) => {
-    console.error('Errore durante il recupero dei followers', err);
-    res.status(500).json({ error: 'Errore durante il recupero dei followers' });
-  })
+    .then((results) => {
+      res.json({ results: results });
+    }).catch((err) => {
+      console.error('Errore durante il recupero dei followers', err);
+      res.status(500).json({ error: 'Errore durante il recupero dei followers' });
+    })
 })
 
 
-app.post("/api/get-following", async (req, res)=>{
-  const {username } = req.body;
+app.post("/api/get-following", async (req, res) => {
+  const { username } = req.body;
 
   const connection1 = connection.promise();
   const sql = 'SELECT * FROM seguiti seguiti WHERE username_seguiti = ?';
   await connection1.query(sql, [username])
-  .then((results)=>{
-    res.json({ length: results[0].length });
-  }).catch((err) => {
-    console.error('Errore durante il recupero dei seguiti', err);
-    res.status(500).json({ error: 'Errore durante il recupero dei seguiti' });
-  })
+    .then((results) => {
+      res.json({ length: results[0].length });
+    }).catch((err) => {
+      console.error('Errore durante il recupero dei seguiti', err);
+      res.status(500).json({ error: 'Errore durante il recupero dei seguiti' });
+    })
 })
 
 app.listen(3000, () => {
