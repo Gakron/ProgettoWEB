@@ -1,22 +1,26 @@
 @echo off
+echo Installazione del Database Locale in corso...
 
-REM Verifica se SQL Server Express è già installato
-sqllocaldb i MSSQLLocalDB
+:: Configurazione
+set mysql_user=root
+set mysql_password=ciaociao19
+set database_name=progetto
+set backup_file=backup.sql
+
+:: Verifica se MySQL è installato
+where mysql > nul 2>&1
 if %errorlevel% neq 0 (
-    REM Installa SQL Server Express
-    echo Installazione SQL Server Express in corso...
-    SQL2022-SSEI-Expr.exe /q /Action=Install /Features=SQL /InstanceName=MSSQLLocalDB /SqlSysAdminAccounts=yourUsername /IAcceptSqlServerLicenseTerms
-) else (
-    echo SQL Server Express è già installato.
+    echo MySQL non è installato. Installazione in corso...
+    
+    :: Esegui l'installer
+    mysql-installer-web-community-8.0.34.0.msi
 )
 
-REM Verifica se sqlcmd è già installato
-where sqlcmd
-if %errorlevel% neq 0 (
-    REM Installa sqlcmd
-    echo Installazione sqlcmd in corso...
-    MsSqlCmdLnUtils.msi /q   
-) else (
-    echo sqlcmd è già installato.
-)
+:: Crea il database
+mysql -u %mysql_user% -p%mysql_password% -e "CREATE DATABASE %database_name%;"
 
+:: Ripristina il backup
+mysql -u %mysql_user% -p%mysql_password% %database_name% < %backup_file%
+
+echo Installazione completata.
+pause
