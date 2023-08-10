@@ -14,6 +14,21 @@ if %errorlevel% neq 0 (
     echo SQLLocalDB è già installato.
 )
 
+
+:: Verifica se msodbcsql.msi è già installato
+wmic product where "Name like 'ODBC Driver%'" get Name > nul 2>&1
+if %errorlevel% neq 0 (
+    echo msodbcsql.msi non è installato. Installazione in corso...
+    
+    :: Scarica ed installa msodbcsql.msi
+    :: Modifica il percorso del file di installazione di msodbcsql.msi
+    start /wait msodbcsql.msi
+    
+    echo msodbcsql.msi installato.
+) else (
+    echo msodbcsql.msi è già installato.
+)
+
 :: Verifica se SQLCMD è già installato
 sqlcmd -? > nul 2>&1
 if %errorlevel% neq 0 (
@@ -21,7 +36,6 @@ if %errorlevel% neq 0 (
     
     :: Scarica ed installa SQLCMD
     :: Modifica il percorso del file di installazione di SQLCMD
-    start /wait msodbcsql.msi
     start /wait MsSqlCmdLnUtils.msi
     
     echo SQLCMD installato.
