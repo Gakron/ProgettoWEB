@@ -12,14 +12,14 @@ const axios = require("axios");
 
 
 const mysql = require('mysql2');
+const config = require('./config');
 
 let connection = mysql.createConnection({
-  host: "localhost",
-  port: 3305,
-  user: "root",
-  password: "ciaociao19",
-  database: "progetto"
-
+  host: config.database.host,
+  port: config.database.port,
+  user: config.database.user,
+  password: config.database.password,
+  database: config.database.database
 });
 
 connection.connect(function (err) {
@@ -399,8 +399,8 @@ app.post('/api/request-plot', async (req, res) => {
       var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
       const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
       await connection1.query(sql, data).then((results3) => {
-        console.log("response 3 caso: ",response);
-        console.log("response abbreviata: ",data);
+        console.log("response 3 caso: ", response);
+        console.log("response abbreviata: ", data);
         const body = {
           Runtime: data[0],
           Genre: data[1],
@@ -408,7 +408,7 @@ app.post('/api/request-plot', async (req, res) => {
           Released: data[3],
           Seen: false
         }
-        console.log("body terzo caso: ",body);
+        console.log("body terzo caso: ", body);
         res.json(body);
 
       }).catch((err) => {
@@ -440,19 +440,19 @@ async function controllaSeGiàVisto(utente, id) {
 
 app.post('/api/mark-as-watched', async (req, res) => {
   const { id, utente, date } = req.body;
-  console.log("id: ", id," Utente: ", utente, " date: ", date)
+  console.log("id: ", id, " Utente: ", utente, " date: ", date)
 
   try {
     // Controlla se il film è già stato segnato come visto dall'utente
     const giàVisto = await controllaSeGiàVisto(utente, id);
     console.log("sono nel controlloGiàVisto", giàVisto);
     console.log(giàVisto)
-    if (giàVisto===1) {
+    if (giàVisto === 1) {
       res.send("Già visto");
       return;
     }
     const connection1 = connection.promise();
-   
+
     // Inserisce la nuova voce nella tabella 'visti'
     const insertResult = await connection1.query("INSERT INTO visti SET ?", {
       username: utente,
@@ -567,7 +567,7 @@ app.post('/api/seen-films', async (req, res) => {
 
 app.post('/api/submit-comment', async (req, res) => {
   const { username, id, comment, data } = req.body;
-console.log(username, id,comment,data)
+  console.log(username, id, comment, data)
   let query = "INSERT INTO commenti SET ?";
   connection.query(query, { username: username, id_film: id, commento: comment, data_commento: data }, async (err, results) => {
     if (err) {
