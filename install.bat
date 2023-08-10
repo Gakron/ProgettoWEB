@@ -15,9 +15,6 @@ if %errorlevel% neq 0 (
 )
 
 
-start /wait msodbcsql.msi
-
-
 :: Verifica se SQLCMD è già installato
 sqlcmd -? > nul 2>&1
 if %errorlevel% neq 0 (
@@ -25,39 +22,19 @@ if %errorlevel% neq 0 (
     
     :: Scarica ed installa SQLCMD
     :: Modifica il percorso del file di installazione di SQLCMD
-    start /wait MsSqlCmdLnUtils.msi
+    start /wait MsSqlCmdLnUtils.msi TARGETDIR="%~dp0"
     
     echo SQLCMD installato.
 ) else (
     echo SQLCMD è già installato.
 )
 
-
-:: Ottieni il percorso della cartella del file batch
-for %%i in ("%~dp0.") do (
-    set "batch_folder=%%~fi"
-)
-
-:: Trova il percorso di sqlcmd.exe nel sistema
-for /f "delims=" %%a in ('where /r C:\ sqlcmd.exe 2^>nul') do (
-    set "sqlcmd_path=%%a"
-    goto :sqlcmd_found
-)
-
-:sqlcmd_found
-if not defined sqlcmd_path (
-    echo sqlcmd.exe non trovato nel sistema.
-    pause
-    exit /b
-)
-
-:: Copia sqlcmd.exe nella cartella del file batch
-copy /Y "%sqlcmd_path%" "%batch_folder%\sqlcmd.exe"
+:: ...
 
 :: Aggiungi la cartella del file batch a PATH (assicurati che la cartella non sia già presente)
-setx PATH "%batch_folder%;%PATH%"
+setx PATH "%~dp0;%PATH%"
 
-echo sqlcmd.exe copiato e cartella aggiunta a PATH.
+:: ...
 
 
 echo Creazione del Database Locale in corso...
