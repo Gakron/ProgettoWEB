@@ -1,26 +1,50 @@
 @echo off
-echo Installazione del Database Locale in corso...
+
+:: Verifica se SQLLocalDB è già installato
+sqllocaldb info MSSQLLocalDB > nul 2>&1
+if %errorlevel% neq 0 (
+    echo SQLLocalDB non è installato. Installazione in corso...
+    
+    :: Scarica ed installa SQLLocalDB
+    :: Modifica il percorso del file di installazione di SQLLocalDB
+    start /wait SQL2022-SSEI-Expr.exe
+    
+    echo SQLLocalDB installato.
+) else (
+    echo SQLLocalDB è già installato.
+)
+
+:: Verifica se SQLCMD è già installato
+sqlcmd -? > nul 2>&1
+if %errorlevel% neq 0 (
+    echo SQLCMD non è installato. Installazione in corso...
+    
+    :: Scarica ed installa SQLCMD
+    :: Modifica il percorso del file di installazione di SQLCMD
+    start /wait MsSqlCmdLnUtils.msi
+    
+    echo SQLCMD installato.
+) else (
+    echo SQLCMD è già installato.
+)
+
+echo Creazione del Database Locale in corso...
 
 :: Configurazione
-set mysql_user=root
-set mysql_password=ciaociao19
+set server_name=(localdb)\MSSQLLocalDB
 set database_name=progetto
 set backup_file=backup.sql
 
-:: Verifica se MySQL è installato
-where mysql > nul 2>&1
-if %errorlevel% neq 0 (
-    echo MySQL non è installato. Installazione in corso...
-    
-    :: Esegui l'installer
-    mysql-installer-web-community-8.0.34.0.msi
+:: Trova la directory System32
+for %%i in ("%SYSTEMROOT%\System32\sqlcmd.exe") do (
+    set sqlcmd_exe=%%~dpi
 )
 
 :: Crea il database
-mysql -u %mysql_user% -p%mysql_password% -e "CREATE DATABASE %database_name%;"
+%sqlcmd_exe%sqlcmd.exe -S %server_name% -Q "CREATE DATABASE %database_name%;"
 
 :: Ripristina il backup
-mysql -u %mysql_user% -p%mysql_password% %database_name% < %backup_file%
+%sqlcmd_exe%sqlcmd.exe -S %server_name% -d %database_name% -i %backup_file%
 
-echo Installazione completata.
+echo Creazione completata.
 pause
