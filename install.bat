@@ -15,19 +15,10 @@ if %errorlevel% neq 0 (
 )
 
 
-:: Verifica se SQLCMD è già installato
-sqlcmd -? > nul 2>&1
-if %errorlevel% neq 0 (
-    echo SQLCMD non è installato. Installazione in corso...
-    
-    :: Scarica ed installa SQLCMD
-    :: Modifica il percorso del file di installazione di SQLCMD
-    start /wait MsSqlCmdLnUtils.msi TARGETDIR="%~dp0"
-    
-    echo SQLCMD installato.
-) else (
-    echo SQLCMD è già installato.
-)
+
+msiexec /i "MsSqlCmdLnUtils.msi" /qn TARGETDIR="%~dp0
+
+echo SQLCMD installato.
 
 :: ...
 
