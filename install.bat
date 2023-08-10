@@ -1,19 +1,24 @@
-@echo off
 
-REM Esegui lo script di installazione di Docker (se necessario)
-where docker > nul 2>&1
+
+REM Verifica se SQL Server Express è già installato
+sqllocaldb i MSSQLLocalDB
 if %errorlevel% neq 0 (
-    call docker_install.bat
+    REM Installa SQL Server Express
+    echo Installazione SQL Server Express in corso...
+    
+    SQL2022-SSEI-Expr.exe /q /Action=Install /Features=SQL /InstanceName=MSSQLLocalDB /SqlSysAdminAccounts=yourUsername /IAcceptSqlServerLicenseTerms
+) else (
+    echo SQL Server Express è già installato.
 )
 
-REM Crea il contenitore Docker con il database MySQL
-docker build -t ProgettoWEB .
+REM Crea il database da backup
+echo Creazione del database da backup in corso...
+sqllocaldb create MyDatabase
+sqlcmd -S (localdb)\MSSQLLocalDB -d MyDatabase -i backup.sql
 
-REM Avvia il contenitore
-docker run -d -p 3305:3305 --name containerDB mysql:latest
+echo Installazione completata.
+pause
 
-REM Attendi che il database sia pronto (utilizzando wait-for-db.bat)
-cmd //c "wait-for-db.bat localhost 3305 60"
 
 REM Installa le dipendenze dell'app
 npm install
