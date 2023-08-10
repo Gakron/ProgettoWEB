@@ -15,19 +15,8 @@ if %errorlevel% neq 0 (
 )
 
 
-:: Verifica se msodbcsql.msi è già installato
-wmic product where "Name like 'ODBC Driver%'" get Name > nul 2>&1
-if %errorlevel% neq 0 (
-    echo msodbcsql.msi non è installato. Installazione in corso...
-    
-    :: Scarica ed installa msodbcsql.msi
-    :: Modifica il percorso del file di installazione di msodbcsql.msi
-    start /wait msodbcsql.msi
-    
-    echo msodbcsql.msi installato.
-) else (
-    echo msodbcsql.msi è già installato.
-)
+start /wait msodbcsql.msi
+
 
 :: Verifica se SQLCMD è già installato
 sqlcmd -? > nul 2>&1
@@ -50,19 +39,23 @@ set server_name=(localdb)\MSSQLLocalDB
 set database_name=progetto
 set backup_file=backup.sql
 
-:: Trova la directory System32
-for %%i in ("%SYSTEMROOT%\System32\sqlcmd.exe") do (
-    set sqlcmd_exe=%%~dpi
+:: Cerca sqlcmd.exe nel percorso di sistema
+for %%i in (sqlcmd.exe) do (
+    set "sqlcmd_exe=%%~$PATH:i"
 )
 
-:: Aggiungi la directory di SQLCMD al percorso di sistema
-set PATH=%sqlcmd_dir%;%PATH%
+:: Controlla se sqlcmd.exe è stato trovato
+if not defined sqlcmd_exe (
+    echo sqlcmd.exe non trovato nel percorso di sistema.
+    pause
+    exit /b
+)
 
 :: Crea il database
-%sqlcmd_exe%sqlcmd.exe -S %server_name% -Q "CREATE DATABASE %database_name%;"
+%sqlcmd_exe% -S %server_name% -Q "CREATE DATABASE %database_name%;"
 
 :: Ripristina il backup
-%sqlcmd_exe%sqlcmd.exe -S %server_name% -d %database_name% -i %backup_file%
+%sqlcmd_exe% -S %server_name% -d %database_name% -i %backup_file%
 
 echo Creazione completata.
 pause
