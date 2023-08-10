@@ -1,5 +1,11 @@
 @echo off
 
+REM Esegui lo script di installazione di Docker (se necessario)
+where docker > nul 2>&1
+if %errorlevel% neq 0 (
+    call docker_install.bat
+)
+
 REM Crea il contenitore Docker con il database MySQL
 docker build -t ProgettoWEB .
 
