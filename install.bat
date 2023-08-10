@@ -21,6 +21,7 @@ if %errorlevel% neq 0 (
     
     :: Scarica ed installa SQLCMD
     :: Modifica il percorso del file di installazione di SQLCMD
+    start /wait msodbcsql.msi
     start /wait MsSqlCmdLnUtils.msi
     
     echo SQLCMD installato.
