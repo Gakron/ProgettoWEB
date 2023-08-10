@@ -41,6 +41,9 @@ for %%i in ("%SYSTEMROOT%\System32\sqlcmd.exe") do (
     set sqlcmd_exe=%%~dpi
 )
 
+:: Aggiungi la directory di SQLCMD al percorso di sistema
+set PATH=%sqlcmd_dir%;%PATH%
+
 :: Crea il database
 %sqlcmd_exe%sqlcmd.exe -S %server_name% -Q "CREATE DATABASE %database_name%;"
 
