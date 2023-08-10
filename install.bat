@@ -17,11 +17,18 @@ if %errorlevel% neq 0 (
     echo MySQL non è installato. Verrà scaricato e installato.
 
     REM Installa MySQL 
-    start /wait mysql-installer-web-community-8.0.34.0 (1).msi
+    start /wait mysql-installer-web-community-8.0.34.0.msi
 
     REM Aggiungi il percorso di MySQL all'ambiente PATH 
     setx PATH "%PATH%;C:\Program Files\MySQL\MySQL Server 8.0\bin" /M
 )
+
+REM Avvia il server MySQL
+start mysqld
+
+REM Attendi alcuni secondi per permettere al server di avviarsi completamente
+timeout /t 10 /nobreak >nul
+
 
 
 REM Crea il database MySQL (assumendo che MySQL sia già installato e configurato)
