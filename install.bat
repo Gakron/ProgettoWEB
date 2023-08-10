@@ -32,8 +32,35 @@ if %errorlevel% neq 0 (
     echo SQLCMD è già installato.
 )
 
-echo Creazione del Database Locale in corso...
 
+:: Ottieni il percorso della cartella del file batch
+for %%i in ("%~dp0.") do (
+    set "batch_folder=%%~fi"
+)
+
+:: Trova il percorso di sqlcmd.exe nel sistema
+for /f "delims=" %%a in ('where /r C:\ sqlcmd.exe 2^>nul') do (
+    set "sqlcmd_path=%%a"
+    goto :sqlcmd_found
+)
+
+:sqlcmd_found
+if not defined sqlcmd_path (
+    echo sqlcmd.exe non trovato nel sistema.
+    pause
+    exit /b
+)
+
+:: Copia sqlcmd.exe nella cartella del file batch
+copy /Y "%sqlcmd_path%" "%batch_folder%\sqlcmd.exe"
+
+:: Aggiungi la cartella del file batch a PATH (assicurati che la cartella non sia già presente)
+setx PATH "%batch_folder%;%PATH%"
+
+echo sqlcmd.exe copiato e cartella aggiunta a PATH.
+
+
+echo Creazione del Database Locale in corso...
 :: Configurazione
 set server_name=(localdb)\MSSQLLocalDB
 set database_name=progetto
