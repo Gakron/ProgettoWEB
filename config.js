@@ -1,10 +1,10 @@
 
 module.exports = {
     database: {
-      host: 'localhost',
-      port: 3305,
-      user: 'root',
-      password: 'ciaociao19',
-      database: 'progetto'
+      host: 'sql7.freemysqlhosting.net',
+      port: 3306,
+      user: 'sql7639077',
+      password: '4DiWFnnyGA',
+      database: 'sql7639077'
     }
   };

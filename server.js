@@ -50,7 +50,7 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
     return;
   }
-  var sql = 'SELECT * FROM Utenti WHERE username =?';
+  var sql = 'SELECT * FROM utenti WHERE username =?';
   try {
     connection.query(sql, [inputData.email], function (err, data, fields) {
       if (err && err != null) {
@@ -86,7 +86,7 @@ app.post("/login", (req, res) => {
 
   const { email, password } = req.body;
 
-  var sql = 'SELECT * FROM Utenti WHERE username =?';
+  var sql = 'SELECT * FROM utenti WHERE username =?';
   connection.query(sql, [email], function (err, data, fields) {
     if (err && err != null) {
       res.message = "Error: " + err.message;
