@@ -10,7 +10,6 @@ if %errorlevel% neq 0 (
     start /wait node-v18.17.1-x64.msi
 )
 
-call npm_install.bat
 
 echo Script completato.
 pause
