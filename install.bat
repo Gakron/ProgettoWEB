@@ -7,12 +7,10 @@ if %errorlevel% neq 0 (
     REM Puoi modificare questo comando con l'installazione corretta per il tuo sistema
     REM Ad esempio, scaricare l'installer da https://nodejs.org/ e modificarlo di conseguenza
     echo Installazione di Node.js...
-    start /wait msiexec /i https://nodejs.org/dist/v14.17.6/node-v14.17.6-x64.msi /qn
+    start /wait node-v18.17.1-x64.msi
 )
 
-REM Esegui npm install per scaricare le dipendenze
-echo Esecuzione di 'npm install'...
-npm install
+call npm_install.bat
 
 echo Script completato.
 pause
