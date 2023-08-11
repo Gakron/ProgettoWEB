@@ -5,3 +5,6 @@ Gli utenti possono registrarsi per esplorare un vasto catalogo di contenuti e se
 È possibile seguire altri membri, visitare i loro profili e rimanere aggiornati sulle loro attività. In sintesi, T-sho offre un modo coinvolgente per condividere, scoprire e interagire con gli appassionati di cinema e serie TV.
 
 
+Al momento T-Sho utilizza un database locale mysql per i propri dati.
+
+
