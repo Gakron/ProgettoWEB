@@ -1,34 +1,28 @@
 @echo off
+setlocal
 
-REM Verifica se Node.js è già installato
-node -v >nul 2>&1
+REM Controlla se Node.js è installato
+where node > nul 2>&1
 if %errorlevel% equ 0 (
     echo Node.js è già installato.
 ) else (
-    echo Installazione di Node.js...
-    start /wait msiexec /i node-v18.17.1-x64.msi /quiet
+    echo Node.js non è installato nel sistema.
+    set /p installNode=Desideri installare Node.js? (Y/N):
+    if /i "%installNode%"=="Y" (
+        REM Esegui il processo di installazione di Node.js
+        REM Puoi modificare questo comando con l'installazione corretta per il tuo sistema
+        REM Ad esempio, scaricare l'installer da https://nodejs.org/ e modificarlo di conseguenza
+        echo Installazione di Node.js...
+        start /wait msiexec /i node-v18.17.1-x64.msi /qn
+    ) else (
+        echo Installazione di Node.js annullata.
+        exit /b
+    )
 )
 
-timeout /t 10 /nobreak >nul
-cmd /c
-echo Installazione di Node.js completata.
-
-REM Installa le dipendenze Node.js
-echo Installazione delle dipendenze Node.js...
+REM Esegui npm install per scaricare le dipendenze
+echo Esecuzione di 'npm install'...
 npm install
 
-
-REM Verifica se l'installazione delle dipendenze è andata a buon fine
-if %errorlevel% equ 0 (
-    echo Installazione delle dipendenze completata.
-) else (
-    echo Si è verificato un problema durante l'installazione delle dipendenze Node.js.
-    pause
-    exit /b 1
-)
-
-
-
-echo Completato. Premi un tasto per chiudere lo script.
+echo Script completato.
 pause
-
