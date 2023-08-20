@@ -6,7 +6,7 @@ var jsonParser = bodyParser.json();
 const cors = require('cors');
 app.use(cors());
 
-
+app.use(express.static('public'));
 
 const axios = require("axios");
 
@@ -14,25 +14,111 @@ const axios = require("axios");
 const mysql = require('mysql2');
 const config = require('./config');
 
-let connection = mysql.createConnection({
+const connectionConfig = {
   host: config.database.host,
   port: config.database.port,
   user: config.database.user,
   password: config.database.password,
   database: config.database.database
-});
+};
 
-connection.connect(function (err) {
-  if (err) {
-    return console.log("Error: " + err.message);
+const schemaName = 'tsho';
+const connection = mysql.createConnection(connectionConfig);
+console.log('Connesso al server MySQL');
+
+
+async function db() {
+
+  try {
+    const connection1=connection.promise();
+
+
+    const [rows] = await connection1.query(`SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?`, [schemaName]);
+
+    // Se lo schema non esiste, crealo
+    if (rows.length === 0) {
+      await connection1.query(`CREATE DATABASE ${schemaName}`);
+      console.log('Schema creato con successo!');
+    } else {
+      console.log('Lo schema esiste già.');
+    }
+
+    // Use the created schema
+    await connection1.query(`USE ${schemaName}`);
+
+    // Create tables if they don't exist
+    await connection1.query(`
+      CREATE TABLE IF NOT EXISTS utenti (
+        username varchar(45) NOT NULL,
+        password varchar(45) NOT NULL,
+        PRIMARY KEY (username),
+        UNIQUE KEY username_UNIQUE (username)
+      )
+    `);
+
+    await connection1.query(`
+      CREATE TABLE IF NOT EXISTS commenti (
+        id_commento int NOT NULL AUTO_INCREMENT,
+        username varchar(45) NOT NULL,
+        id_film varchar(20) NOT NULL,
+        commento varchar(400) DEFAULT NULL,
+        data_commento date DEFAULT NULL,
+        PRIMARY KEY (id_commento),
+        UNIQUE KEY id_commento_UNIQUE (id_commento),
+        KEY username_idx (username),
+        KEY id_film_idx (id_film),
+        CONSTRAINT username FOREIGN KEY (username) REFERENCES utenti (username)
+      )
+    `);
+
+    await connection1.query(`
+      CREATE TABLE IF NOT EXISTS media (
+        imdbID varchar(20) NOT NULL,
+        Title varchar(200) NOT NULL,
+        Year varchar(20) DEFAULT NULL,
+        Type varchar(45) DEFAULT NULL,
+        Plot varchar(2000) DEFAULT NULL,
+        Runtime varchar(10) DEFAULT NULL,
+        Genre varchar(150) DEFAULT NULL,
+        Poster varchar(300) DEFAULT NULL,
+        Released varchar(15) DEFAULT NULL,
+        PRIMARY KEY (imdbID),
+        UNIQUE KEY id_UNIQUE (imdbID)
+      )
+    `);
+
+    await connection1.query(`
+      CREATE TABLE IF NOT EXISTS seguiti (
+        username varchar(45) NOT NULL,
+        username_seguiti varchar(45) NOT NULL,
+        PRIMARY KEY (username,username_seguiti),
+        CONSTRAINT usernameù FOREIGN KEY (username) REFERENCES utenti (username)
+      )
+    `);
+
+    await connection1.query(`
+      CREATE TABLE IF NOT EXISTS visti (
+        username varchar(45) NOT NULL,
+        id_film varchar(45) NOT NULL,
+        tipo varchar(45) DEFAULT NULL,
+        data_visione varchar(45) NOT NULL,
+        KEY username_idx (username),
+        KEY id_film_idx (id_film),
+        CONSTRAINT id_film FOREIGN KEY (id_film) REFERENCES media (imdbID),
+        CONSTRAINT usernamey FOREIGN KEY (username) REFERENCES utenti (username)
+      )
+    `);
+
+
+  } catch (error) {
+    console.error('Errore:', error);
   }
-  console.log("Connesso al db!");
 
-});
-
+}
 
 
-app.use(express.static('public'));
+db();
+
 
 app.use(bodyParser.json());
 
@@ -83,28 +169,30 @@ app.post("/register", (req, res) => {
 
 
 app.post("/login", async (req, res) => {
+
   const connection1 = connection.promise();
 
   const { email, password } = req.body;
 
   var sql = 'SELECT * FROM utenti WHERE username =?';
-  const data = await connection1.query(sql, [email]);
-  // if (err && err != null) {
-  //   res.message = "Error: " + err.message;
-  //   res.sendStatus(500);
-  //   return;
-  // }
+  const data = await connection1.query(sql, [email], (err)=>{
+    if (err && err != null) {
+      res.message = "Error: " + err.message;
+      res.sendStatus(500);
+      return;
+    }
+  });
+  
   if (data[0].length === 0) {
     res.status(404).json({ message: 'Utente non registrato' });
   }
-  else if (data[0].password != password) {
+  else if (data[0][0].password !== password) {
     res.status(403).json({ message: 'Password errata' });
 
   }
   
   else {
-    res.sendStatus(200);
-    return;
+    res.status(200).json({ message: 'Accesso effettuato' });
   }
 })
 

@@ -39,19 +39,18 @@ window.onload = () => {
                 const popularFilms = response.data.data;
                 const response2 = await axios.get('http://localhost:3000/api/populars/series');
                 const popularSeries = response2.data.data;
-                console.log(popularFilms)
-                console.log(popularSeries)
 
                 if (popularFilms.length > 0) {
                     this.generateFilmSlidesPopulars(popularFilms);
                 } else {
-                    // Nessun film trovato con Year=2023
+                    const film_title=document.getElementById("swiper-title-film-pop");
+                    film_title.textContent="You haven't searched for any 2023's movies yet"
                 }
                 if (popularSeries.length > 0) {
                     this.generateSeriesSlidesPopulars(popularSeries);
                 } else {
-                    // Nessun film trovato con Year=2023
-                }
+                    const serie_title=document.getElementById("swiper-title-serie-pop");
+                    serie_title.textContent="You haven't searched for any 2023's series yet"                }
 
 
             } catch (error) {
