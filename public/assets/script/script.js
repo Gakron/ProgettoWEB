@@ -69,8 +69,13 @@ const login = () =>
             window.location.assign("http://localhost:5501/public/pages/home.html");
         }
 
-        else
-            alert(res.statusText);
+        if(res.status===403){
+            alert("Password errata")
+        }
+        if(res.status===404){
+            alert("Utente non registrato")
+        }
+            
     })
 
 

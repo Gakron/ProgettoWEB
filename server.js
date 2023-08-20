@@ -82,32 +82,30 @@ app.post("/register", (req, res) => {
 });
 
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
+  const connection1 = connection.promise();
 
   const { email, password } = req.body;
 
   var sql = 'SELECT * FROM utenti WHERE username =?';
-  connection.query(sql, [email], function (err, data, fields) {
-    if (err && err != null) {
-      res.message = "Error: " + err.message;
-      res.sendStatus(500);
-      return;
-    }
-    else if (data.length == 0) {
-      res.statusMessage = "Utente non registrato";
-      res.sendStatus(404);
-      return;
-    }
-    else if (data[0].password != password) {
-      res.statusMessage = "Password Errata";
-      res.sendStatus(403);
-      return;
-    }
-    else {
-      res.sendStatus(200);
-      return;
-    }
-  })
+  const data = await connection1.query(sql, [email]);
+  // if (err && err != null) {
+  //   res.message = "Error: " + err.message;
+  //   res.sendStatus(500);
+  //   return;
+  // }
+  if (data[0].length === 0) {
+    res.status(404).json({ message: 'Utente non registrato' });
+  }
+  else if (data[0].password != password) {
+    res.status(403).json({ message: 'Password errata' });
+
+  }
+  
+  else {
+    res.sendStatus(200);
+    return;
+  }
 })
 
 
