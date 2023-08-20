@@ -62,7 +62,7 @@ const login = () =>
         }
 
     }).then(res => {
-        if (res.ok && res.status == 200) {
+        if (res.ok && res.status === 200) {
             const username = document.getElementById("lgn_email").value;
             localStorage.clear();
             localStorage.setItem('username', username);

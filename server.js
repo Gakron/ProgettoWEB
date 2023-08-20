@@ -83,28 +83,30 @@ app.post("/register", (req, res) => {
 
 
 app.post("/login", async (req, res) => {
+
   const connection1 = connection.promise();
 
   const { email, password } = req.body;
 
   var sql = 'SELECT * FROM utenti WHERE username =?';
-  const data = await connection1.query(sql, [email]);
-  // if (err && err != null) {
-  //   res.message = "Error: " + err.message;
-  //   res.sendStatus(500);
-  //   return;
-  // }
+  const data = await connection1.query(sql, [email], (err)=>{
+    if (err && err != null) {
+      res.message = "Error: " + err.message;
+      res.sendStatus(500);
+      return;
+    }
+  });
+  
   if (data[0].length === 0) {
     res.status(404).json({ message: 'Utente non registrato' });
   }
-  else if (data[0].password != password) {
+  else if (data[0][0].password !== password) {
     res.status(403).json({ message: 'Password errata' });
 
   }
   
   else {
-    res.sendStatus(200);
-    return;
+    res.status(200).json({ message: 'Accesso effettuato' });
   }
 })
 
