@@ -19,7 +19,6 @@ const connectionConfig = {
   port: config.database.port,
   user: config.database.user,
   password: config.database.password,
-  database: config.database.database
 };
 
 const schemaName = 'tsho';
