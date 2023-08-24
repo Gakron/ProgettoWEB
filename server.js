@@ -6,8 +6,11 @@ var jsonParser = bodyParser.json();
 const cors = require('cors');
 app.use(cors());
 
+
+
 app.use(express.static('public'));
 
+app.use('/scripts', express.static(`${__dirname}/node_modules/`));
 const axios = require("axios");
 
 
@@ -29,7 +32,7 @@ console.log('Connesso al server MySQL');
 async function db() {
 
   try {
-    const connection1=connection.promise();
+    const connection1 = connection.promise();
 
 
     const [rows] = await connection1.query(`SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?`, [schemaName]);
@@ -85,6 +88,19 @@ async function db() {
         UNIQUE KEY id_UNIQUE (imdbID)
       )
     `);
+    const controllo = await connection1.query('SELECT * FROM media');
+    if (controllo[0].length === 0) {
+      await connection1.query(`
+        INSERT INTO media (imdbID, Title, Year, Type,Plot,Runtime,Genre,Poster,Released)
+        VALUES (?, ?,?,?,?,?,?,?,?)
+        `, ['tt14681924', 'My Adventures with Superman', '2023–', 'series', 'Clark Kent builds his secret Superman identity and embraces his role as the hero of Metropolis, while sharing adventures and falling in love with Lois, a star investigative journalist, who also takes Jimmy Olsen under her wing.', 'N/A', 'Animation, Action, Adventure', 'https://m.media-amazon.com/images/M/MV5BYTJjMDBjNjgtYjc2Ni00NDZiLWE2YjQtODQ1YTBlYTFkOWE4XkEyXkFqcGdeQXVyNjk1Mzk1NzI@._V1_SX300.jpg', '06 Jul 2023']);
+        
+        
+        await connection1.query(`
+        INSERT INTO media (imdbID, Title, Year, Type,Plot,Runtime,Genre,Poster,Released)
+        VALUES (?, ?,?,?,?,?,?,?,?)
+        `, ['tt0439572', 'The Flash', '2023', 'movie', 'The plot is unknown. Feature film based on the comic book superhero, The Flash.', '144 min', 'Action, Adventure, Fantasy', 'https://m.media-amazon.com/images/M/MV5BZWE2ZWE5MDQtMTJlZi00MTVjLTkxOTgtNmNiYjg2NDIxN2NhXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg', '16 Jun 2023']);
+    }
 
     await connection1.query(`
       CREATE TABLE IF NOT EXISTS seguiti (
@@ -174,14 +190,14 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   var sql = 'SELECT * FROM utenti WHERE username =?';
-  const data = await connection1.query(sql, [email], (err)=>{
+  const data = await connection1.query(sql, [email], (err) => {
     if (err && err != null) {
       res.message = "Error: " + err.message;
       res.sendStatus(500);
       return;
     }
   });
-  
+
   if (data[0].length === 0) {
     res.status(404).json({ message: 'Utente non registrato' });
   }
@@ -189,7 +205,7 @@ app.post("/login", async (req, res) => {
     res.status(403).json({ message: 'Password errata' });
 
   }
-  
+
   else {
     res.status(200).json({ message: 'Accesso effettuato' });
   }
@@ -558,32 +574,35 @@ app.post('/api/mark-as-watched', async (req, res) => {
 
 
 app.post('/api/get-watched', async (req, res) => {
+  const connection1 = connection.promise();
 
   const username = req.body.username;
   let tot_film = 0;
   let tot_serie = 0;
   let tempo_film = 0;
-
   const queryVisti = `SELECT id_film FROM visti WHERE username = ?`;
-  connection.query(queryVisti, [username], (err, resultsVisti) => {
+  await connection1.query(queryVisti, [username], (err, resultsVisti) => {
+    console.log(resultsVisti)
     if (err) throw err;
-
+  
     //ho preso tutti i film visti nel formato {id_film: 'id'}
     const filmVistiIds = resultsVisti.map((row) => row.id_film);
 
     //adessp ho tutti i film visti qui {'id','id','id'};
-    // console.log(filmVistiIds);
+     console.log("id dei film visti:" , filmVistiIds);
 
     const queryMedia = `SELECT imdbID, Runtime, Type FROM media WHERE imdbID IN (?)`;
+    console.log("querymedia: " , queryMedia);
 
     connection.query(queryMedia, [filmVistiIds], (err, resultsMedia) => {
+    
       if (err) throw err;
       //Ora dentro result media ho gli id dei film e il runtime di ogni film
 
 
       const updatedMediaArray = resultsMedia.map((media) => ({
-        ...media, // Manteniamo gli altri campi inalterati
-        Runtime: media.Runtime.replace(' min', ''), // Rimuoviamo la parola "min" dal campo "Runtime"
+        ...media, // Mantiene gli altri campi inalterati
+        Runtime: media.Runtime.replace(' min', ''), // Rimuove la parola "min" dal campo "Runtime"
       }));
 
       updatedMediaArray.forEach(media => {
@@ -779,7 +798,7 @@ app.post("/api/get-following", async (req, res) => {
   const { username } = req.body;
 
   const connection1 = connection.promise();
-  const sql = 'SELECT * FROM seguiti seguiti WHERE username_seguiti = ?';
+  const sql = 'SELECT * FROM seguiti WHERE username_seguiti = ?';
   await connection1.query(sql, [username])
     .then((results) => {
       res.json({ length: results[0].length });

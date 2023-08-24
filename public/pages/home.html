@@ -139,6 +139,66 @@
   </section>
 
 
+  <!-- PROFILE -->
+
+  <section id="profile" class="hidden">
+    <div class="profile-page">
+      <div class="profile-info">
+        <img class="profile-picture" src="/public/assets/images/profile.svg" alt="Profile Picture">
+        <div class="username"></div>
+        <div class="comment-count">0 commenti</div>
+
+        <div class="follow-container">
+          <button class="unfollow-button hidden">Unfollow</button>
+          <button class="follow-button">Follow</button>
+          <div class="followers">
+            <span class="followers-text">followers</span>
+          </div>
+          <div class="following">
+            <span class="following-text">followings</span>
+          </div>
+          
+        </div>
+        
+      </div>
+      <div class="followers-list-container">
+        <ul id="followers-list-ul"></ul>
+        <ul id="following-list-ul"></ul>
+      </div>
+      <div class="data">
+        <div class="data-containers">
+          <div class="info film">
+            <span class="label">Film visti:</span>
+            <span class="count">0</span>
+          </div>
+          <div class="info tempo-film">
+            <span class="label">Totale ore film:</span>
+            <span class="count">0</span>
+          </div>
+          <div class="info serie">
+            <span class="label">Serie viste:</span>
+            <span class="count">0</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="parte2">
+        <div class="swiper-container" id="film-swiper">
+          <div class="swiper-wrapper" id="film">
+          </div>
+        </div>
+        <div class="swiper-container" id="serie-swiper">
+          <div class="swiper-wrapper" id="serie">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
 
   <!-- LOADER -->
 
@@ -158,6 +218,8 @@
     </div>
 
   </section>
+
+
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/public/assets/script/home.js"></script>
