@@ -10,7 +10,6 @@ app.use(cors());
 
 app.use(express.static('public'));
 
-app.use('/scripts', express.static(`${__dirname}/node_modules/`));
 const axios = require("axios");
 
 
@@ -94,9 +93,9 @@ async function db() {
         INSERT INTO media (imdbID, Title, Year, Type,Plot,Runtime,Genre,Poster,Released)
         VALUES (?, ?,?,?,?,?,?,?,?)
         `, ['tt14681924', 'My Adventures with Superman', '2023–', 'series', 'Clark Kent builds his secret Superman identity and embraces his role as the hero of Metropolis, while sharing adventures and falling in love with Lois, a star investigative journalist, who also takes Jimmy Olsen under her wing.', 'N/A', 'Animation, Action, Adventure', 'https://m.media-amazon.com/images/M/MV5BYTJjMDBjNjgtYjc2Ni00NDZiLWE2YjQtODQ1YTBlYTFkOWE4XkEyXkFqcGdeQXVyNjk1Mzk1NzI@._V1_SX300.jpg', '06 Jul 2023']);
-        
-        
-        await connection1.query(`
+
+
+      await connection1.query(`
         INSERT INTO media (imdbID, Title, Year, Type,Plot,Runtime,Genre,Poster,Released)
         VALUES (?, ?,?,?,?,?,?,?,?)
         `, ['tt0439572', 'The Flash', '2023', 'movie', 'The plot is unknown. Feature film based on the comic book superhero, The Flash.', '144 min', 'Action, Adventure, Fantasy', 'https://m.media-amazon.com/images/M/MV5BZWE2ZWE5MDQtMTJlZi00MTVjLTkxOTgtNmNiYjg2NDIxN2NhXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_SX300.jpg', '16 Jun 2023']);
@@ -581,51 +580,51 @@ app.post('/api/get-watched', async (req, res) => {
   let tot_serie = 0;
   let tempo_film = 0;
   const queryVisti = `SELECT id_film FROM visti WHERE username = ?`;
-  await connection1.query(queryVisti, [username], (err, resultsVisti) => {
-    console.log(resultsVisti)
-    if (err) throw err;
-  
+
+  try {
+    const resultsVisti = await connection1.execute(queryVisti, [username]);
     //ho preso tutti i film visti nel formato {id_film: 'id'}
-    const filmVistiIds = resultsVisti.map((row) => row.id_film);
+    const filmVistiIds = resultsVisti[0].map((row) => row.id_film);
 
     //adessp ho tutti i film visti qui {'id','id','id'};
-     console.log("id dei film visti:" , filmVistiIds);
 
     const queryMedia = `SELECT imdbID, Runtime, Type FROM media WHERE imdbID IN (?)`;
-    console.log("querymedia: " , queryMedia);
 
-    connection.query(queryMedia, [filmVistiIds], (err, resultsMedia) => {
-    
-      if (err) throw err;
-      //Ora dentro result media ho gli id dei film e il runtime di ogni film
+    const resultsMedia = await connection1.query(queryMedia, [filmVistiIds]);
+
+    //Ora dentro result media ho gli id dei film e il runtime di ogni film
+
+    const updatedMediaArray = resultsMedia[0].map((media) => ({
+      ...media, // Mantiene gli altri campi inalterati
+      Runtime: media.Runtime.replace(' min', ''), // Rimuove la parola "min" dal campo "Runtime"
+    }));
 
 
-      const updatedMediaArray = resultsMedia.map((media) => ({
-        ...media, // Mantiene gli altri campi inalterati
-        Runtime: media.Runtime.replace(' min', ''), // Rimuove la parola "min" dal campo "Runtime"
-      }));
-
-      updatedMediaArray.forEach(media => {
-        if (media.Type === "series") {
-          tot_serie++;
+    updatedMediaArray.forEach(media => {
+      if (media.Type === "series") {
+        tot_serie++;
+      }
+      if (media.Type === "movie") {
+        tot_film++;
+        if (media.Runtime !== 'N/A') {
+          tempo_film = tempo_film + parseInt(media.Runtime);
         }
-        if (media.Type === "movie") {
-          tot_film++;
-          if (media.Runtime !== 'N/A') {
-            tempo_film = tempo_film + parseInt(media.Runtime);
-          }
-        }
-      });
+      }
+    });
+    res.json({
+      tot_film: tot_film,
+      tot_serie: tot_serie,
+      tempo_film: tempo_film,
+    });
+
+  } catch (err) {
+    console.error('Errore nella ricerca dei film visti: ', err);
+    res.status(500).json({ error: 'Errore nella ricerca dei film visti' });
+
+  }
 
 
-      res.json({
-        tot_film: tot_film,
-        tot_serie: tot_serie,
-        tempo_film: tempo_film,
-      });
-    })
-  })
-})
+});
 
 
 app.post('/api/get-comments-number', async (req, res) => {
