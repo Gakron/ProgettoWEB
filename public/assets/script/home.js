@@ -15,7 +15,10 @@ let currentMedia; //occhio che salva l'id, non il titolo
 let ultimoMovie;  //salva tutto il film
 
 
-
+const logo = document.querySelector(".logo");
+    logo.addEventListener("click", () => {
+        window.location.assign("/pages/home.html")
+    })
 
 window.onload = () => {
 
@@ -79,7 +82,6 @@ window.onload = () => {
             try {
                 const url = this.getHost() + "s=" + title + "&";
                 const response = await axios.post('http://localhost:3000/api/request-local', { title, url })
-                console.log(response);
 
                 if (response.data.message === 'Titolo non trovato nel database') {
                     // Nessun risultato trovato nel database locale
@@ -499,14 +501,12 @@ window.onload = () => {
             const response = await axios.post('http://localhost:3000/api/retrieve-comments', { id })
             const commenti = response.data;
 
-            console.log(commenti)
             return commenti;
         },
 
         addCommentForm: async function (movie) {
             currentMedia = movie.imdbID;
 
-            console.log("sono su addCommentMovie: ", movie);
             const commentForm = document.querySelector(".comment-form");
             const commentInputElimina = document.querySelector(".comment-input");
             const submitCommentButtonElimina = document.querySelector(".submit-comment-button");
@@ -530,10 +530,8 @@ window.onload = () => {
 
             submitCommentButton.addEventListener("click", async () => {
                 const commentText = commentInput.value;
-                console.log("QUI SOONO NEL SUBMIT COMMENT MOVIE:", currentMedia)
                 await this.submitComment(currentMedia, commentText);
                 commentInput.value = "";
-                console.log("ULTIMO MOVIE: ",ultimoMovie)
                 await this.getMovieInfo(ultimoMovie);
 
             });
@@ -543,13 +541,9 @@ window.onload = () => {
 
         submitComment: async function (movie, commentText) {
             try {
-                console.log("BBBBBBBB",currentMedia);
-                
-
                 const data = this.getCurrentDate();
                 const username = localStorage.getItem("username");
                 const id = movie;
-                console.log("id film: ", id, "username: ", username, "data: ", data);
                 const response = await axios.post('http://localhost:3000/api/submit-comment', { username: username, id: currentMedia, comment: commentText, data: data });
                 await this.getMovieInfo(ultimoMovie);
             } catch (error) {
@@ -561,9 +555,8 @@ window.onload = () => {
         },
 
         redirectProfiloUtente: async function (username) {
-            console.log("ciao", username);
             // this.changeSection("loader");
-            const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+            const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(username)}`;
             window.location.href = url;
 
 
@@ -596,7 +589,6 @@ window.onload = () => {
 
             const genreDom = document.querySelector("#movie-info .generi");
             genreDom.innerHTML = "Genre: " + response.data.Genre
-            console.log("prova stampa id", id);
 
             const bottone = document.querySelector(".visto-button")
 
@@ -629,7 +621,7 @@ window.onload = () => {
                     commentoDiv.appendChild(div_vuoto);
 
                     const fotoProfiloImg = document.createElement("img");
-                    fotoProfiloImg.setAttribute("src", "/public/assets/images/profile.svg")
+                    fotoProfiloImg.setAttribute("src", "/assets/images/profile.svg")
                     fotoProfiloImg.alt = "Foto profilo";
                     commentoDiv.appendChild(fotoProfiloImg);
 
@@ -683,8 +675,6 @@ window.onload = () => {
             const id = currentMedia;
             const utente = localStorage.getItem("username");
             const date = this.getCurrentDate()
-            console.log("questo è l'id:", id);
-            console.log("questo è currentMedia: ", currentMedia);
             try {
                 const response = await axios.post('http://localhost:3000/api/mark-as-watched', { id, utente, date });
 
@@ -715,7 +705,6 @@ window.onload = () => {
 
     const searchBetterButton = document.querySelector(".cerca-meglio");
     searchBetterButton.addEventListener("click", () => {
-        console.log(ultimaRicerca);
         Ricerca.searchMovieBetter(ultimaRicerca);
     })
 
@@ -823,7 +812,7 @@ window.onload = () => {
     profile.addEventListener("click", () => {
         Ricerca.changeSection("loader");
         const username = localStorage.getItem("username");
-        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })
 
@@ -831,7 +820,7 @@ window.onload = () => {
     profile_txt.addEventListener("click", () => {
         Ricerca.changeSection("loader");
         const username = localStorage.getItem("username");
-        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })
 

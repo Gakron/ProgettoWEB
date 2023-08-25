@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+
+const path = require('path');
 const bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 
@@ -182,6 +184,8 @@ app.post("/register", (req, res) => {
 });
 
 
+
+
 app.post("/login", async (req, res) => {
 
   const connection1 = connection.promise();
@@ -271,7 +275,6 @@ app.post('/api/real-time-search', async (req, res) => {
 app.post('/api/request-local', async (req, res) => {
   try {
     const { title, url } = req.body;
-    console.log('Titolo:', title);
     connection.query(
       'SELECT * FROM media WHERE title LIKE ?',
       [`%${title}%`],
@@ -298,7 +301,6 @@ app.post('/api/request-local', async (req, res) => {
 async function richiestaEsterna(url) {
   try {
     const response = await axios.get(url);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -329,9 +331,6 @@ function controllaID(imdbID) {
 app.post('/api/request-to-server', async (req, res) => {
   try {
     const { title, url } = req.body;
-    console.log('Titolo:', title);
-    console.log('URL:', url);
-    console.log("oh no sto chiedendo al server!")
     const rispostaEsterna = await richiestaEsterna(url + "type=movie&");
     const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
     const rispostaEsterna3 = await richiestaEsterna(url + "type=series&");
@@ -343,7 +342,6 @@ app.post('/api/request-to-server', async (req, res) => {
       ...(rispostaEsterna3?.Search ?? []),
       ...(rispostaEsterna4?.Search ?? [])
     ];
-    console.log(concatenatedArray)
     //METODO CHE USAVO PRIMA
     // const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
     //   const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
@@ -368,7 +366,6 @@ app.post('/api/request-to-server', async (req, res) => {
           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
           return;
         } else {
-          console.log("inserito");
         }
       })
     }
@@ -386,9 +383,6 @@ app.post('/api/request-to-server', async (req, res) => {
 app.post('/api/request-to-server-better', async (req, res) => {
   try {
     const { title, url } = req.body;
-    console.log('Titolo:', title);
-    console.log('URL:', url);
-    console.log("oh no sto chiedendo al server!")
     const rispostaEsterna = await richiestaEsterna(url + "type=movie&page=1&");
     const rispostaEsterna2 = await richiestaEsterna(url + "type=movie&page=2&");
     const rispostaEsterna3 = await richiestaEsterna(url + "type=movie&page=3&");
@@ -416,7 +410,6 @@ app.post('/api/request-to-server-better', async (req, res) => {
       ...(rispostaEsterna10?.Search ?? [])
 
     ];
-    console.log(concatenatedArray)
     //METODO CHE USAVO PRIMA
     // const concatenatedArray = risposteEsternaArray.reduce((result, risposta) => {
     //   const searchArray = risposta?.Search ?? []; // Utilizza un array vuoto come fallback se risposta.Search è undefined
@@ -441,7 +434,6 @@ app.post('/api/request-to-server-better', async (req, res) => {
           res.status(500).json({ error: 'Errore nell\'inserimento dei dati nel database' });
           return;
         } else {
-          console.log("inserito");
         }
       })
     }
@@ -462,11 +454,9 @@ app.post('/api/request-plot', async (req, res) => {
   let query = "SELECT * FROM media WHERE imdbID = ?";
 
   await connection1.query(query, [id]).then(async (results) => {
-    console.log(results[0][0].Plot);
     if (results[0][0].Plot !== null) {
       let query = "SELECT * FROM visti WHERE username = ? AND id_film = ?";
       await connection1.query(query, [username, id]).then(async (results2) => {
-        console.log("risposta2: ", results2)
         if (results2[0].length > 0) {
           const body = {
             Genre: results[0][0].Genre,
@@ -475,11 +465,9 @@ app.post('/api/request-plot', async (req, res) => {
             Released: results[0][0].Released,
             Seen: true
           }
-          console.log("body nel caso in cui l'ho visto: ", body)
           res.json(body);
         }
         else {
-          console.log("ho il plot, ma non ho visto il film");
           const body = {
             Genre: results[0][0].Genre,
             Runtime: results[0][0].Runtime,
@@ -487,20 +475,16 @@ app.post('/api/request-plot', async (req, res) => {
             Released: results[0][0].Released,
             Seen: false
           }
-          console.log("body nel caso in cui non l'ho visto: ", body)
 
           res.json(body);
         }
       })
     }
     else {
-      console.log("non ho il plot, quindi non posso aver visto il film");
       const response = await axios.get(url + "i=" + id + "&plot=full&");
       var sql = "UPDATE media SET Runtime = ?, Genre = ?, Plot = ?, Released = ? WHERE imdbID = ?";
       const data = [response.data.Runtime, response.data.Genre, response.data.Plot, response.data.Released, id];
       await connection1.query(sql, data).then((results3) => {
-        console.log("response 3 caso: ", response);
-        console.log("response abbreviata: ", data);
         const body = {
           Runtime: data[0],
           Genre: data[1],
@@ -508,7 +492,6 @@ app.post('/api/request-plot', async (req, res) => {
           Released: data[3],
           Seen: false
         }
-        console.log("body terzo caso: ", body);
         res.json(body);
 
       }).catch((err) => {
@@ -528,8 +511,6 @@ async function controllaSeGiàVisto(utente, id) {
   const connection1 = connection.promise();
   try {
     const results = await connection1.query("SELECT * FROM visti WHERE username = ? AND id_film = ?", [utente, id]);
-    console.log("reuslt già visto: ", results)
-    console.log("reuslt.lenght già visto: ", results[0].length)
     return results[0].length;
   } catch (err) {
     console.error('Errore nella verifica dei dati nel database:', err);
@@ -540,13 +521,10 @@ async function controllaSeGiàVisto(utente, id) {
 
 app.post('/api/mark-as-watched', async (req, res) => {
   const { id, utente, date } = req.body;
-  console.log("id: ", id, " Utente: ", utente, " date: ", date)
 
   try {
     // Controlla se il film è già stato segnato come visto dall'utente
     const giàVisto = await controllaSeGiàVisto(utente, id);
-    console.log("sono nel controlloGiàVisto", giàVisto);
-    console.log(giàVisto)
     if (giàVisto === 1) {
       res.send("Già visto");
       return;
@@ -560,7 +538,6 @@ app.post('/api/mark-as-watched', async (req, res) => {
       data_visione: date
     });
 
-    console.log("inserito");
     res.send("Film segnato come già visto!");
   } catch (err) {
     console.error('Errore nell\'inserimento dei dati nel database:', err);
@@ -670,7 +647,6 @@ app.post('/api/seen-films', async (req, res) => {
 
 app.post('/api/submit-comment', async (req, res) => {
   const { username, id, comment, data } = req.body;
-  console.log(username, id, comment, data)
   let query = "INSERT INTO commenti SET ?";
   connection.query(query, { username: username, id_film: id, commento: comment, data_commento: data }, async (err, results) => {
     if (err) {

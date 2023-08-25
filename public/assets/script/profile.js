@@ -6,7 +6,7 @@ window.onload = () => {
 
     const logo = document.querySelector(".logo");
     logo.addEventListener("click", () => {
-        window.location.assign("/public/pages/home.html")
+        window.location.assign("/pages/home.html")
     })
 
 
@@ -34,14 +34,14 @@ window.onload = () => {
     const profile = document.querySelector(".profile");
     profile.addEventListener("click", () => {
         const username = localStorage.getItem("username");
-        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })
 
     const profile_txt = document.querySelector(".profile-box span");
     profile_txt.addEventListener("click", () => {
         const username = localStorage.getItem("username");
-        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(username)}`;
+        const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(username)}`;
         window.location.href = url;
     })
 
@@ -60,7 +60,7 @@ window.onload = () => {
                     const followerLi = document.createElement('li');
                     followerLi.textContent = follower.username_seguiti;
                     followerLi.addEventListener("click", () => {
-                        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(follower.username_seguiti)}`;
+                        const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(follower.username_seguiti)}`;
                         window.location.href = url;
                         followersListUL.innerHTML = '';
                     })
@@ -91,7 +91,7 @@ window.onload = () => {
                     const followingLi = document.createElement('li');
                     followingLi.textContent = following.username;
                     followingLi.addEventListener("click", () => {
-                        const url = `http://localhost:5501/public/pages/profile.html?user=${encodeURIComponent(following.username)}`;
+                        const url = `http://localhost:3000/pages/profile.html?user=${encodeURIComponent(following.username)}`;
                         window.location.href = url;
                         followingLi.innerHTML = '';
 
@@ -110,7 +110,6 @@ window.onload = () => {
 
     async function followRequest() {
         const response = await axios.post('http://localhost:3000/api/follow-request', { usernameAttuale, username })
-        console.log("risposta del follow", response)
         if (response.data.message === 'Follow effettuato con successo') {
             bottoneFollow.classList.add("hidden");
             bottoneUnfollow.classList.remove("hidden");
@@ -119,7 +118,6 @@ window.onload = () => {
 
     async function unfollowRequest() {
         const response = await axios.post('http://localhost:3000/api/unfollow-request', { usernameAttuale, username })
-        console.log("risposta dell'unfollow", response)
 
         if (response.data.message === 'unfollow effettuato con successo') {
             bottoneUnfollow.classList.add("hidden");
@@ -129,7 +127,6 @@ window.onload = () => {
 
     async function alreadyFollow() {
         const response = await axios.post('http://localhost:3000/api/already-following', { usernameAttuale, username })
-        console.log("seguo già?: ", response.data.alreadyFollowing);
         if (username === usernameAttuale) {
             bottoneFollow.classList.add("hidden");
             return;

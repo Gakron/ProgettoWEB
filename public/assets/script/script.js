@@ -66,7 +66,7 @@ const login = () =>
             const username = document.getElementById("lgn_email").value;
             localStorage.clear();
             localStorage.setItem('username', username);
-            window.location.assign("http://localhost:5501/public/pages/home.html");
+            window.location.assign("http://localhost:3000/pages/home.html");
         }
 
         if(res.status===403){
