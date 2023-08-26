@@ -494,3 +494,14 @@ header {
     margin-bottom: 20px;
 
 }
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+
+::-webkit-scrollbar-thumb {
+    scrollbar-width: thin;
+    background-color: #A3B18A;
+    scrollbar-color: #888 transparent;
+}

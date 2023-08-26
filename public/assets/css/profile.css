@@ -313,7 +313,33 @@ main {
   background-color: #A3B18A;
   width: 98px;
   border-radius: 5px;
+  max-height: 100px; 
+  overflow-y: auto;
 
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+
+#followers-list-ul::-webkit-scrollbar-thumb,
+#following-list-ul::-webkit-scrollbar-thumb{
+  background-color: #333;
+  border-radius: 5px;
+}
+
+#followers-list-ul::-webkit-scrollbar,
+#following-list-ul::-webkit-scrollbar{
+  width: 8px;
+
+}
+
+
+::-webkit-scrollbar-thumb{
+  scrollbar-width: thin;
+  background-color: #A3B18A;
+  scrollbar-color: #888 transparent;
 }
 
 #followers-list-ul a{
@@ -338,6 +364,8 @@ main {
   background-color: #A3B18A;
   width:  98px;
   border-radius: 5px;
+  max-height: 100px; 
+  overflow-y: auto;
 
 }
 
