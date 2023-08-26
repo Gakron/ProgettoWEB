@@ -505,3 +505,7 @@ header {
     background-color: #A3B18A;
     scrollbar-color: #888 transparent;
 }
+
+.suggestions::-webkit-scrollbar-thumb{
+    border-radius: 5px;
+}
