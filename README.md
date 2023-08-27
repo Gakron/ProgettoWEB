@@ -12,4 +12,4 @@ Link per node: 'https://nodejs.org/'
 
 ## Configurazione
 
-Modica il file config.js che trovi nella cartella e modifica i campi user e password assicurandoti che siano i dati corretti per accedere al tuo server mysql che hai sul tuo pc.
+Modica il file config.js che trovi nella cartella e modifica i campi user e password assicurandoti che siano i dati corretti per accedere al server mysql che hai sul tuo pc.
