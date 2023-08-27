@@ -8,17 +8,3 @@ Gli utenti possono registrarsi per esplorare un vasto catalogo di contenuti e se
 
 
 
-Guida per l'utilizzo di T-Sho:
-
--Scaricare il file zip del progetto ed estrarlo nel tuo computer;
-
--Avviare il file "install", ti guiderà nell'installazione di Node.js;
-
--Apri la cartella del progetto con Visual Studio Code
-
--Nella console di Visual Studio esegui il comando "npm i"
-
--Nella console di Visual Studio esegui il comando node ".\server.js"
-
--Usando l'estensione "Live Server" clicca su "Go Live"
-
