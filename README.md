@@ -13,3 +13,19 @@ Link per node: 'https://nodejs.org/'
 ## Configurazione
 
 Dopo aver clonato il progetto sul tuo pc apri il file config.js che trovi nella cartella e modifica i campi user e password assicurandoti che siano i dati corretti per accedere al server mysql che hai sul tuo pc.
+
+
+## Avvio
+-Spostati sulla cartella del progetto: 
+```
+ cd T-Sho
+```
+-Installare le dipendenze del progetto:
+```
+npm i
+```
+-Avviare il server:
+```
+npm start
+```
+-Adesso puoi aprire il tuo browser e digitare http://localhost:3000 nella barra di ricerca
