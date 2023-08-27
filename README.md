@@ -9,3 +9,7 @@ Gli utenti possono registrarsi per esplorare un vasto catalogo di contenuti e se
 Per eseguire l'applicativo è necessario aver installato un database mysql e node.js. 
 Link mysql: 'https://dev.mysql.com/downloads/installer/' 
 Link per node: 'https://nodejs.org/'
+
+## Configurazione
+
+Modica il file config.js che trovi nella cartella e modifica i campi user e password assicurandoti che siano i dati corretti per accedere al tuo server mysql che hai sul tuo pc.
