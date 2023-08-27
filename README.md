@@ -6,4 +6,6 @@ Gli utenti possono registrarsi per esplorare un vasto catalogo di contenuti e se
 
 
 ## Prerequisiti
-Per eseguire l'applicativo è necessario aver installato un database mysql e node.js Link mysql: 'https://dev.mysql.com/downloads/installer/' Link per node: 'https://nodejs.org/'
+Per eseguire l'applicativo è necessario aver installato un database mysql e node.js. 
+Link mysql: 'https://dev.mysql.com/downloads/installer/' 
+Link per node: 'https://nodejs.org/'
