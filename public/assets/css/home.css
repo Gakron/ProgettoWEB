@@ -73,24 +73,37 @@ header {
 
 .profile-box {
     display: flex;
-
-    margin-right: 20px;
-}
-
-.profile-box span {
+    margin-right: 10px;
+  }
+  
+  .profile-box span {
+    color: #333;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 540;
+  
+  }
+  
+  .profile-box .profile {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .profile-box span {
     color: white;
     cursor: pointer;
     font-size: 18px;
     font-weight: 540;
     margin-top: 20px;
-    margin-right: 5px;
-}
-
-.profile-box .profile {
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-}
+  
+  }
+  
+  #logout{
+    margin-right: 0px;
+    margin-left: 15px;
+    font-size: 16px;
+  }
 
 
 

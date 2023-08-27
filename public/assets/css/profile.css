@@ -31,7 +31,7 @@ header {
 
 .profile-box {
   display: flex;
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .profile-box span {
@@ -39,7 +39,6 @@ header {
   cursor: pointer;
   font-size: 18px;
   font-weight: 540;
-  margin-left: 15px;
 
 }
 
@@ -55,7 +54,13 @@ header {
   font-size: 18px;
   font-weight: 540;
   margin-top: 20px;
-  margin-right: 5px;
+
+}
+
+#logout{
+  margin-right: 0px;
+  margin-left: 15px;
+  font-size: 16px;
 }
 
 main {
@@ -380,3 +385,5 @@ main {
   background-color: #A3B18A;
   margin:10px
 }
+
+

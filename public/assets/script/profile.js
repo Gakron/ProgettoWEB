@@ -316,7 +316,7 @@ window.onload = () => {
         }
     }
 
-
+    
 
 
     generateFilmSlides(username);
@@ -335,3 +335,7 @@ function convertiMinutiInOre(minuti) {
     return `${ore}h ${minutiRimasti}min`;
 }
 
+function logout() {
+    localStorage.clear();
+    location.href = "login.html";
+}
