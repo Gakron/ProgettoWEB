@@ -5,5 +5,5 @@ Gli utenti possono registrarsi per esplorare un vasto catalogo di contenuti e se
 È possibile seguire altri membri, visitare i loro profili e rimanere aggiornati sulle loro attività. In sintesi, T-sho offre un modo coinvolgente per condividere, scoprire e interagire con gli appassionati di cinema e serie TV.
 
 
-##Prerequisiti
+## Prerequisiti
 Per eseguire l'applicativo è necessario aver installato un database mysql e node.js Link mysql: 'https://dev.mysql.com/downloads/installer/' Link per node: 'https://nodejs.org/'
